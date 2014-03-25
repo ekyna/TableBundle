@@ -1,0 +1,94 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="table.registry.class">Ekyna\Component\Table\TableRegistry</parameter>
+        <parameter key="table.factory.class">Ekyna\Component\Table\TableFactory</parameter>
+        <parameter key="table.generator.class">Ekyna\Component\Table\TableGenerator</parameter>
+        <parameter key="table.extension.class">Ekyna\Component\Table\Extension\DependencyInjection\DependencyInjectionExtension</parameter>
+
+        <parameter key="table.twig.table_extension.class">Ekyna\Bundle\TableBundle\Twig\TableExtension</parameter>
+    </parameters>
+
+    <services>
+        <!-- TableRegistry -->
+        <service id="table.registry" class="%table.registry.class%">
+            <argument type="collection">
+                <argument type="service" id="table.extension" />
+            </argument>
+        </service>
+
+        <!-- TableFactory -->
+        <service id="table.factory" class="%table.factory.class%">
+            <argument type="service" id="table.registry" />
+        </service>
+
+        <!-- TableGenerator -->
+        <service id="table.generator" class="%table.generator.class%">
+            <argument type="service" id="table.factory" />
+            <argument type="service" id="form.factory" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="request_stack" />
+        </service>
+
+        <!-- TwigExtension -->
+        <service id="table.twig.ui_extension" class="%table.twig.table_extension.class%">
+            <argument type="service" id="twig" />
+            <argument type="service" id="white_october_pagerfanta.view_factory" />
+            <tag name="twig.extension" />
+        </service>
+
+        <!-- DependencyInjectionExtension -->
+        <service id="table.extension" class="%table.extension.class%" public="false">
+            <argument type="service" id="service_container" />
+            <!-- All services with tag "table.type" are inserted here by TablePass -->
+            <argument type="collection" />
+            <!-- All services with tag "table.column_type" are inserted here by TablePass -->
+            <argument type="collection" />
+            <!-- All services with tag "table.filter_type" are inserted here by TablePass -->
+            <argument type="collection" />
+        </service>
+
+        <!-- CoreExtension -->
+        <service id="table.type.table" class="Ekyna\Component\Table\Extension\Core\Type\TableType">
+            <!-- <argument type="service" id="property_accessor"/> -->
+            <tag name="table.type" alias="table" />
+        </service>
+
+        <service id="table.column_type.actions" class="Ekyna\Component\Table\Extension\Core\Type\Column\ActionsType">
+            <tag name="table.column_type" alias="actions" />
+        </service>
+        <service id="table.column_type.anchor" class="Ekyna\Component\Table\Extension\Core\Type\Column\AnchorType">
+            <tag name="table.column_type" alias="anchor" />
+        </service>
+        <service id="table.column_type.datetime" class="Ekyna\Component\Table\Extension\Core\Type\Column\DatetimeType">
+            <tag name="table.column_type" alias="datetime" />
+        </service>
+        <service id="table.column_type.number" class="Ekyna\Component\Table\Extension\Core\Type\Column\NumberType">
+            <tag name="table.column_type" alias="number" />
+        </service>
+        <service id="table.column_type.text" class="Ekyna\Component\Table\Extension\Core\Type\Column\TextType">
+            <tag name="table.column_type" alias="text" />
+        </service>
+        <service id="table.column_type.nested_anchor" class="Ekyna\Component\Table\Extension\Core\Type\Column\NestedAnchorType">
+            <tag name="table.column_type" alias="nested_anchor" />
+        </service>
+        <service id="table.column_type.nested_actions" class="Ekyna\Component\Table\Extension\Core\Type\Column\NestedActionsType">
+            <tag name="table.column_type" alias="nested_actions" />
+        </service>
+
+        <service id="table.filter_type.datetime" class="Ekyna\Component\Table\Extension\Core\Type\Filter\DatetimeType">
+            <tag name="table.filter_type" alias="datetime" />
+        </service>
+        <service id="table.filter_type.number" class="Ekyna\Component\Table\Extension\Core\Type\Filter\NumberType">
+            <tag name="table.filter_type" alias="number" />
+        </service>
+        <service id="table.filter_type.text" class="Ekyna\Component\Table\Extension\Core\Type\Filter\TextType">
+            <tag name="table.filter_type" alias="text" />
+        </service>
+    </services>
+
+</container>

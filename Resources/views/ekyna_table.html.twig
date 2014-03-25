@@ -1,0 +1,141 @@
+{% block table %}
+{% spaceless %}
+{% if table.available_filters|length > 0 %}
+<div class="table-filters">
+	<div class="row table-filters-available">
+	    <div class="col-md-3">
+	        <span class="table-filters-title">Filtres disponibles</span>
+	    </div>
+	    <div class="col-md-9">
+	        <div class="table-filters-controls">{{ block('available_filters') }}</div>
+	    </div>
+	</div>
+	{% if table.filter_form %}
+	<div class="row table-filters-form">
+	    <div class="col-md-3">
+	        <span class="table-filters-title">Nouveau filtre <strong>{{ table.filter_label }}</strong></span>
+	    </div>
+	    <div class="col-md-9">
+		    <div class="table-filters-controls">
+                {{ bootstrap_set_style('inline') }}
+		        {{ form_start(table.filter_form) }}
+		        <div class="row">
+		            <div class="col-md-3">{{ form_row(table.filter_form.operator) }}</div>
+		            <div class="col-md-6">{{ form_row(table.filter_form.value) }}</div>
+		            <div class="col-md-3">
+		                <button type="submit" class="btn btn-success" style="margin-right:14px;"><span class="glyphicon glyphicon-plus"></span></button>
+		                <a href="#" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></a>
+		            </div>
+		        </div>
+		        {{ form_rest(table.filter_form) }}
+	        </div>
+	    </div>
+	</div>
+	{% endif %}
+	{% if table.active_filters|length > 0 %}
+	<div class="row table-filters-active">
+	    <div class="col-md-3">
+	        <span class="table-filters-title">Filtres actifs</span>
+	    </div>
+	    <div class="col-md-9">
+	        <div class="table-filters-controls">{{ block('active_filters') }}</div>
+	    </div>
+	</div>
+	{% endif %}
+</div>
+{% endif %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover{% if options.class %} {{ options.class }}{% endif %}">
+        {{ block('table_head') }}
+        {{ block('table_body') }}
+    </table>
+</div>
+{% if table.pager.nbPages > 1 %}
+<div class="table-pager">
+{{ ekyna_table_pager(table.pager) }}
+</div>
+{% endif %}
+{% endspaceless %}
+{% endblock %}
+
+{% block available_filters %}
+{% for filter in table.available_filters %}
+<a href="{{ ekyna_table_filter_add_path(filter) }}" class="btn btn-xs btn-primary">{{ filter.vars.label }}<span class="glyphicon glyphicon-plus-sign"></span></a>
+{% endfor %}
+{% endblock %}
+
+{% block active_filters %}
+{% for filter in table.active_filters %}
+<a href="{{ ekyna_table_filter_remove_path(filter) }}" class="btn btn-xs btn-success">{{ filter.vars.label|raw }}<span class="glyphicon glyphicon-minus-sign"></span></a>
+{% endfor %}
+{% endblock %}
+
+{% block table_head %}
+<thead>
+    <tr>
+        {% for column in table.columns %}
+        {% if column.vars.sortable %}
+        <th class="sort{% if column.vars.sorted %} sorted{% endif %}">
+            <a href="{{ ekyna_table_sort_path(column) }}" class="{{ column.vars.sort_dir }}">{{ column.vars.label }}</a>
+        </th>
+        {% else %}
+        <th>{{ column.vars.label }}</th>
+        {% endif %}
+        {% endfor %}
+    </tr>
+</thead>
+{% endblock %}
+
+{% block table_body %}
+<tbody>
+{% if table.rows|length > 0 %}
+{% for row in table.rows %}
+{{ block('table_row') }}
+{% endfor %}
+{% else %}
+<tr><td colspan="{{ table.columns|length }}" style="text-align:center;font-style:italic;">Aucun élément disponible</td></tr>
+{% endif %}
+</tbody>
+{% endblock %}
+
+{% block table_row %}
+<tr data-id="{{ row.entityId }}">
+    {% for cell in row.cells %}
+    {{ ekyna_table_cell(cell) }}
+    {% endfor %}
+</tr>
+{% endblock %}
+
+{% block text_cell %}
+<td{% if vars.sorted %} class="sorted"{% endif %}>{{ vars.value }}</td>
+{% endblock %}
+
+{% block anchor_cell %}
+<td{% if vars.sorted %} class="sorted"{% endif %}>
+    <a href="{{ path(vars.route, vars.parameters) }}">{{ vars.value }}</a>
+</td>
+{% endblock %}
+
+{% block actions_cell %}
+<td class="actions">
+{% for button in vars.buttons %}
+	{% if button.disabled %}
+	    <a href="#" class="btn btn-xs btn-{{ button.class }} disabled" title="{{ button.label }}">
+	{% else %}
+	    <a href="{{ path(button.route, button.parameters) }}" class="btn btn-xs btn-{{ button.class }}" title="{{ button.label }}">
+	{% endif %}
+	{% if button.icon|length > 0 %}<span class="glyphicon glyphicon-{{ button.icon }}"></span>{% else %}{{ button.label }}{% endif %}</a>
+{% endfor %}
+</td>
+{% endblock %}
+
+{% block nested_actions_cell %}
+{{ block('actions_cell') }}
+{% endblock %}
+
+{% block nested_anchor_cell %}
+<td class="nested">
+    {% for class in vars.tree %}<i{% if class|length > 0 %} class="{{ class }}"{% endif %}></i>{% endfor -%}
+    <a href="{{ path(vars.route, vars.parameters) }}">{{ vars.value }}</a>
+</td>
+{% endblock %}
