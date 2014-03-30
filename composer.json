@@ -27,7 +27,6 @@
         }
     },
     "target-dir" : "Ekyna/Bundle/TableBundle",
-    "minimum-stability" : "dev",
     "extra" : {
         "branch-alias" : {
             "dev-master" : "0.1.x-dev"
