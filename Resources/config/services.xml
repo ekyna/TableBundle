@@ -10,7 +10,8 @@
         <parameter key="table.generator.class">Ekyna\Component\Table\TableGenerator</parameter>
         <parameter key="table.extension.class">Ekyna\Component\Table\Extension\DependencyInjection\DependencyInjectionExtension</parameter>
 
-        <parameter key="table.twig.table_extension.class">Ekyna\Bundle\TableBundle\Twig\TableExtension</parameter>
+        <parameter key="table.twig.table_extension.template">EkynaTableBundle::ekyna_table.html.twig</parameter>
+        <parameter key="table.twig.table_extension.class">Ekyna\Component\Table\Twig\TableExtension</parameter>
     </parameters>
 
     <services>
@@ -38,6 +39,7 @@
         <service id="table.twig.ui_extension" class="%table.twig.table_extension.class%">
             <argument type="service" id="twig" />
             <argument type="service" id="white_october_pagerfanta.view_factory" />
+            <argument>%table.twig.table_extension.template%</argument>
             <tag name="twig.extension" />
         </service>
 
