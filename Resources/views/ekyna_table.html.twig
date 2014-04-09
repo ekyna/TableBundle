@@ -4,7 +4,7 @@
 <div class="table-filters">
 	<div class="row table-filters-available">
 	    <div class="col-md-3">
-	        <span class="table-filters-title">Filtres disponibles</span>
+	        <span class="table-filters-title">{{ 'ekyna_table.available_filters'|trans }}</span>
 	    </div>
 	    <div class="col-md-9">
 	        <div class="table-filters-controls">{{ block('available_filters') }}</div>
@@ -13,7 +13,7 @@
 	{% if table.filter_form %}
 	<div class="row table-filters-form">
 	    <div class="col-md-3">
-	        <span class="table-filters-title">Nouveau filtre <strong>{{ table.filter_label }}</strong></span>
+	        <span class="table-filters-title">{{ 'ekyna_table.new_filter'|trans }} <strong>{{ table.filter_label|trans }}</strong></span>
 	    </div>
 	    <div class="col-md-9">
 		    <div class="table-filters-controls">
@@ -35,7 +35,7 @@
 	{% if table.active_filters|length > 0 %}
 	<div class="row table-filters-active">
 	    <div class="col-md-3">
-	        <span class="table-filters-title">Filtres actifs</span>
+	        <span class="table-filters-title">{{ 'ekyna_table.active_filters'|trans }}</span>
 	    </div>
 	    <div class="col-md-9">
 	        <div class="table-filters-controls">{{ block('active_filters') }}</div>
@@ -60,13 +60,13 @@
 
 {% block available_filters %}
 {% for filter in table.available_filters %}
-<a href="{{ ekyna_table_filter_add_path(filter) }}" class="btn btn-xs btn-primary">{{ filter.vars.label }}<span class="glyphicon glyphicon-plus-sign"></span></a>
+<a href="{{ ekyna_table_filter_add_path(filter) }}" class="btn btn-xs btn-primary">{{ filter.vars.label|trans }}<span class="glyphicon glyphicon-plus-sign"></span></a>
 {% endfor %}
 {% endblock %}
 
 {% block active_filters %}
 {% for filter in table.active_filters %}
-<a href="{{ ekyna_table_filter_remove_path(filter) }}" class="btn btn-xs btn-success">{{ filter.vars.label|raw }}<span class="glyphicon glyphicon-minus-sign"></span></a>
+<a href="{{ ekyna_table_filter_remove_path(filter) }}" class="btn btn-xs btn-success">{{ filter.vars.label|trans|raw }}<span class="glyphicon glyphicon-minus-sign"></span></a>
 {% endfor %}
 {% endblock %}
 
@@ -76,10 +76,10 @@
         {% for column in table.columns %}
         {% if column.vars.sortable %}
         <th class="sort{% if column.vars.sorted %} sorted{% endif %}">
-            <a href="{{ ekyna_table_sort_path(column) }}" class="{{ column.vars.sort_dir }}">{{ column.vars.label }}</a>
+            <a href="{{ ekyna_table_sort_path(column) }}" class="{{ column.vars.sort_dir }}">{{ column.vars.label|trans }}</a>
         </th>
         {% else %}
-        <th>{{ column.vars.label }}</th>
+        <th>{{ column.vars.label|trans }}</th>
         {% endif %}
         {% endfor %}
     </tr>
@@ -93,7 +93,7 @@
 {{ block('table_row') }}
 {% endfor %}
 {% else %}
-<tr><td colspan="{{ table.columns|length }}" style="text-align:center;font-style:italic;">Aucun élément disponible</td></tr>
+<tr><td colspan="{{ table.columns|length }}" style="text-align:center;font-style:italic;">{{ 'ekyna_table.no_results'|trans }}</td></tr>
 {% endif %}
 </tbody>
 {% endblock %}
@@ -120,11 +120,11 @@
 <td class="actions">
 {% for button in vars.buttons %}
 	{% if button.disabled %}
-	    <a href="#" class="btn btn-xs btn-{{ button.class }} disabled" title="{{ button.label }}">
+	    <a href="#" class="btn btn-xs btn-{{ button.class }} disabled" title="{{ button.label|trans }}">
 	{% else %}
-	    <a href="{{ path(button.route, button.parameters) }}" class="btn btn-xs btn-{{ button.class }}" title="{{ button.label }}">
+	    <a href="{{ path(button.route, button.parameters) }}" class="btn btn-xs btn-{{ button.class }}" title="{{ button.label|trans }}">
 	{% endif %}
-	{% if button.icon|length > 0 %}<span class="glyphicon glyphicon-{{ button.icon }}"></span>{% else %}{{ button.label }}{% endif %}</a>
+	{% if button.icon|length > 0 %}<span class="glyphicon glyphicon-{{ button.icon }}"></span>{% else %}{{ button.label|trans }}{% endif %}</a>
 {% endfor %}
 </td>
 {% endblock %}
