@@ -66,7 +66,9 @@
 
 {% block active_filters %}
 {% for filter in table.active_filters %}
-<a href="{{ ekyna_table_filter_remove_path(filter) }}" class="btn btn-xs btn-success">{{ filter.vars.label|trans|raw }}<span class="glyphicon glyphicon-minus-sign"></span></a>
+<a href="{{ ekyna_table_filter_remove_path(filter) }}" class="btn btn-xs btn-success">
+    <strong>{{ filter.vars.field|trans }}</strong>&nbsp;{{ filter.vars.operator }}&nbsp;&laquo;&nbsp;{{ filter.vars.value }}&nbsp;&raquo;<span class="glyphicon glyphicon-minus-sign"></span>
+</a>
 {% endfor %}
 {% endblock %}
 
