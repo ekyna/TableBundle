@@ -19,12 +19,12 @@
 		    <div class="table-filters-controls">
                 {{ bootstrap_set_style('inline') }}
 		        {{ form_start(table.filter_form) }}
-		        <div class="row">
+		        <div class="row form-body">
 		            <div class="col-md-3">{{ form_row(table.filter_form.operator) }}</div>
 		            <div class="col-md-6">{{ form_row(table.filter_form.value) }}</div>
 		            <div class="col-md-3">
 		                <button type="submit" class="btn btn-success" style="margin-right:14px;"><span class="glyphicon glyphicon-plus"></span></button>
-		                <a href="#" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></a>
+		                <a href="#" class="btn btn-danger table-filter-close"><span class="glyphicon glyphicon-remove"></span></a>
 		            </div>
 		        </div>
 		        {{ form_rest(table.filter_form) }}
