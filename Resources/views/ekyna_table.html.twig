@@ -112,6 +112,12 @@
 <td{% if vars.sorted %} class="sorted"{% endif %}>{{ vars.value }}</td>
 {% endblock %}
 
+{% block image_cell %}
+<td>
+    <img alt="thumbnail" src="{{ vars.value|imagine_filter('admin_table') }}" />
+</td>
+{% endblock %}
+
 {% block anchor_cell %}
 <td{% if vars.sorted %} class="sorted"{% endif %}>
     <a href="{{ path(vars.route, vars.parameters) }}">{{ vars.value }}</a>

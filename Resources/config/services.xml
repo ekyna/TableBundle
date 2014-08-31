@@ -75,6 +75,9 @@
         <service id="table.column_type.text" class="Ekyna\Component\Table\Extension\Core\Type\Column\TextType">
             <tag name="table.column_type" alias="text" />
         </service>
+        <service id="table.column_type.image" class="Ekyna\Component\Table\Extension\Core\Type\Column\ImageType">
+            <tag name="table.column_type" alias="image" />
+        </service>
         <service id="table.column_type.nested_anchor" class="Ekyna\Component\Table\Extension\Core\Type\Column\NestedAnchorType">
             <tag name="table.column_type" alias="nested_anchor" />
         </service>

@@ -1,11 +1,11 @@
 /**
  * Filters
  */
-.table-filters>.row {
+.table-filters > .row {
     margin-bottom: 15px;
 }
 
-.table-filters>.row:last-child {
+.table-filters > .row:last-child {
     margin-bottom: 20px;
 }
 
@@ -23,30 +23,32 @@
     font-weight: normal;
 }
 
-@media ( min-width : 992px) {
+@media ( min-width: 992px) {
     .table-filters-title {
         padding: 9px 0 0 0;
         text-align: right;
     }
+
     .table-filters-form .table-filters-title {
         padding: 7px 0 0 0;
     }
-    .table-filters>.row {
+
+    .table-filters > .row {
         margin-bottom: 5px;
     }
 }
 
-.table-filters-available .table-filters-controls,.table-filters-active .table-filters-controls {
+.table-filters-available .table-filters-controls, .table-filters-active .table-filters-controls {
     padding: 8px 0 0 8px;
     background: #f9f9f9;
     border-radius: 4px;
 }
 
-.table-filters-available .table-filters-controls a,.table-filters-active .table-filters-controls a {
+.table-filters-available .table-filters-controls a, .table-filters-active .table-filters-controls a {
     margin: 0 8px 8px 0;
 }
 
-.table-filters-available .table-filters-controls a.btn-xs .glyphicon,.table-filters-active .table-filters-controls a.btn-xs .glyphicon {
+.table-filters-available .table-filters-controls a.btn-xs .glyphicon, .table-filters-active .table-filters-controls a.btn-xs .glyphicon {
     margin-left: 8px;
 }
 
@@ -60,7 +62,7 @@
     margin-bottom: 15px;
 }
 
-@media ( min-width : 992px) {
+@media ( min-width: 992px) {
     .table-filters-controls .form-group {
         margin-bottom: 0;
     }
@@ -77,13 +79,12 @@
     margin: 0;
 }
 
-.table>thead>tr>th,.table>tbody>tr>th,.table>tfoot>tr>th,.table>thead>tr>td,.table>tbody>tr>td,.table>tfoot>tr>td
-    {
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
     padding: 7px 8px;
     line-height: 22px;
 }
 
-.table th,.table th a {
+.table th, .table th a {
     overflow: hidden;
     height: 19px;
     max-height: 19px;
@@ -93,7 +94,7 @@
     border-right: 1px solid #eee;
 }
 
-.table tr th:last-child,.table tr td:last-child {
+.table tr th:last-child, .table tr td:last-child {
     border-right: none;
 }
 
@@ -132,29 +133,29 @@
     content: "\2212";
 }
 
-.table thead th.sort a.desc:after,.table thead th.sort a.asc:hover:after {
+.table thead th.sort a.desc:after, .table thead th.sort a.asc:hover:after {
     content: "\e113";
 }
 
-.table thead th.sort a.asc:after,.table thead th.sort a.desc:hover:after,.table thead th.sort a.none:hover:after
-    {
+.table thead th.sort a.asc:after, .table thead th.sort a.desc:hover:after, .table thead th.sort a.none:hover:after {
     content: "\e114";
 }
 
-.table-striped>tbody>tr>td.sorted,.table-striped>tbody>tr>th.sorted,.table>thead>tr>th.sorted {
+.table-striped > tbody > tr > td.sorted, .table-striped > tbody > tr > th.sorted, .table > thead > tr > th.sorted {
     background: #f9f9f9;
 }
 
-.table-striped>tbody>tr:nth-child(odd)>td.sorted,.table-striped>tbody>tr:nth-child(odd)>th.sorted {
+.table-striped > tbody > tr:nth-child(odd) > td.sorted, .table-striped > tbody > tr:nth-child(odd) > th.sorted {
     background: #f2f2f2;
 }
 
 /**
  * NESTED
  */
-.table-nested>thead>tr>th, .table-nested>tbody>tr>th, .table-nested>tfoot>tr>th, .table-nested>thead>tr>td, .table-nested>tbody>tr>td, .table-nested>tfoot>tr>td {
+.table-nested > thead > tr > th, .table-nested > tbody > tr > th, .table-nested > tfoot > tr > th, .table-nested > thead > tr > td, .table-nested > tbody > tr > td, .table-nested > tfoot > tr > td {
     border-top: none;
 }
+
 .table-nested td.nested {
     padding: 0 8px 0 0;
     line-height: 38px;
@@ -170,7 +171,7 @@
     float: left;
     width: 38px;
     height: 38px;
-    background:#fff;
+    background: #fff;
 }
 
 .table-nested td.nested i.child {
@@ -185,7 +186,7 @@
     background-image: url(data:image/gif;base64,R0lGODlhJgAmAIAAAAAAAP///yH5BAAAAAAALAAAAAAmACYAAAI5jI+JoO0Po5Rs2otxzbz37YXiA46mWZ7qt7Ze6sYQLNcJbed4Xu987Pu1gkIVsYhC/o7KELPJgk4KADs=);
 }
 
-@media ( min-width : 992px) {
+@media ( min-width: 992px) {
     .table-nested td.nested i {
         display: inline-block;
     }
