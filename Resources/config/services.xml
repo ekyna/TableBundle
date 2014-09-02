@@ -7,7 +7,6 @@
     <parameters>
         <parameter key="table.registry.class">Ekyna\Component\Table\TableRegistry</parameter>
         <parameter key="table.factory.class">Ekyna\Component\Table\TableFactory</parameter>
-        <parameter key="table.generator.class">Ekyna\Component\Table\TableGenerator</parameter>
         <parameter key="table.extension.class">Ekyna\Component\Table\Extension\DependencyInjection\DependencyInjectionExtension</parameter>
 
         <parameter key="table.twig.table_extension.template">EkynaTableBundle::ekyna_table.html.twig</parameter>
@@ -25,14 +24,8 @@
         <!-- TableFactory -->
         <service id="table.factory" class="%table.factory.class%">
             <argument type="service" id="table.registry" />
-        </service>
-
-        <!-- TableGenerator -->
-        <service id="table.generator" class="%table.generator.class%">
-            <argument type="service" id="table.factory" />
             <argument type="service" id="form.factory" />
             <argument type="service" id="doctrine.orm.entity_manager" />
-            <argument type="service" id="request_stack" />
         </service>
 
         <!-- TwigExtension -->

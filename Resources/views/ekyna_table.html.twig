@@ -128,14 +128,17 @@
 <td class="actions">
 {% for button in vars.buttons %}
 	{% if button.disabled %}
-	    <a href="#" class="btn btn-xs btn-{{ button.class }} disabled" title="{{ button.label|trans }}">
+	    <a href="#" class="btn btn-xs btn-{{ button.class }} disabled" title="{{ button.label|trans }}">{{ block('action_button_label') }}</a>
 	{% else %}
-	    <a href="{{ path(button.route, button.parameters) }}" class="btn btn-xs btn-{{ button.class }}" title="{{ button.label|trans }}">
+	    <a href="{{ path(button.route, button.parameters) }}" class="btn btn-xs btn-{{ button.class }}" title="{{ button.label|trans }}">{{ block('action_button_label') }}</a>
 	{% endif %}
-	{% if button.icon|length > 0 %}<span class="glyphicon glyphicon-{{ button.icon }}"></span>{% else %}{{ button.label|trans }}{% endif %}</a>
 {% endfor %}
 </td>
 {% endblock %}
+
+{% block action_button_label %}
+{% if button.icon|length > 0 %}<span class="glyphicon glyphicon-{{ button.icon }}"></span>{% else %}{{ button.label|trans }}{% endif %}
+{% endblock action_button_label %}
 
 {% block nested_actions_cell %}
 {{ block('actions_cell') }}
