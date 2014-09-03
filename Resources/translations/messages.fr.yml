@@ -3,3 +3,4 @@ ekyna_table:
     active_filters: Filtres actifs
     new_filter: Nouveau filtre
     no_results: Aucun élément disponible
+    validate: Valider

@@ -98,6 +98,15 @@
     border-right: none;
 }
 
+.table td.selector {
+    width: 14px;
+    text-align: center;
+}
+
+.table td.selector input {
+    margin-top: 6px;
+}
+
 .table td.actions a {
     margin: 0 8px 0 0;
 }

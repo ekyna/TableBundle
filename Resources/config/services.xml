@@ -53,6 +53,9 @@
             <tag name="table.type" alias="table" />
         </service>
 
+        <service id="table.column_type.selector" class="Ekyna\Component\Table\Extension\Core\Type\Column\SelectorType">
+            <tag name="table.column_type" alias="selector" />
+        </service>
         <service id="table.column_type.actions" class="Ekyna\Component\Table\Extension\Core\Type\Column\ActionsType">
             <tag name="table.column_type" alias="actions" />
         </service>
