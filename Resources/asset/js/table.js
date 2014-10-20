@@ -14,7 +14,7 @@
         init: function () {
             this.config = $.extend({}, this.defaults, this.options, this.metadata);
             if (this.config.selector) {
-                /* TEMP / TODO */
+                /* TEMP disable all links / TODO ajax handlers */
                 this.$elem.find('a').bind('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
