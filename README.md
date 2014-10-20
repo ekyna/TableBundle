@@ -144,5 +144,5 @@ You can create your own rendering template (where you will define all blocks of 
  * Tests
  * Type inheritance
  * AJAX
- * Mode documentation (columns, filter, internals, ...)
+ * More documentation (columns, filter, internals, ...)
  
