@@ -144,5 +144,7 @@ You can create your own rendering template (where you will define all blocks of 
  * Tests
  * Type inheritance
  * AJAX
+ * Adapters (ORM, ODM, PHPCR)
+ * Render engines
  * More documentation (columns, filter, internals, ...)
  

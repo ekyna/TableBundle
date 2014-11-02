@@ -1,3 +1,5 @@
+{% extends "@table/table.html.twig" %}
+
 {% block table %}
 {% spaceless %}
 <div class="ekyna-table" data-options='{{ table.options|json_encode }}'>
@@ -80,7 +82,7 @@
 {% block active_filters %}
 {% for filter in table.active_filters %}
 <a href="{{ ekyna_table_filter_remove_path(filter) }}" class="btn btn-xs btn-success">
-    <strong>{{ filter.vars.field|trans }}</strong>&nbsp;{{ filter.vars.operator }}&nbsp;&laquo;&nbsp;{{ filter.vars.value }}&nbsp;&raquo;<span class="glyphicon glyphicon-minus-sign"></span>
+    <strong>{{ filter.vars.field|trans }}</strong>&nbsp;{{ filter.vars.operator }}&nbsp;&laquo;&nbsp;{{ filter.vars.value|trans }}&nbsp;&raquo;<span class="glyphicon glyphicon-minus-sign"></span>
 </a>
 {% endfor %}
 {% endblock active_filters %}
@@ -113,23 +115,17 @@
 </tbody>
 {% endblock table_body %}
 
-{% block table_row %}
-<tr data-id="{{ row.entityId }}">
-    {% for cell in row.cells %}
-    {{ ekyna_table_cell(cell) }}
-    {% endfor %}
-</tr>
-{% endblock table_row %}
+{% block boolean_cell_value %}{{ vars.label|trans }}{% endblock boolean_cell_value %}
 
-{% block selector_cell %}
-<td class="selector">
-    <input type="{{ vars.input_type }}" name="{{ vars.input_name }}" value="{{ vars.value }}"{% if vars.selected %} checked{% endif %} data-element='{{ vars.data|json_encode }}' />
-</td>
-{% endblock selector_cell %}
-
-{% block text_cell %}
-<td{% if vars.sorted %} class="sorted"{% endif %}>{{ vars.value }}</td>
-{% endblock text_cell %}
+{% block datetime_cell %}
+    <td{% if vars.sorted %} class="sorted"{% endif %}>
+        {% if vars.value is sameas(null) %}
+            <em>{{ 'ekyna_core.value.undefined'|trans }}</em>
+        {% else %}
+            {{ vars.value|localizeddate(vars.date_format, vars.time_format) }}
+        {% endif %}
+    </td>
+{% endblock datetime_cell %}
 
 {% block image_cell %}
 <td>
@@ -137,35 +133,6 @@
 </td>
 {% endblock image_cell %}
 
-{% block anchor_cell %}
-<td{% if vars.sorted %} class="sorted"{% endif %}>
-    <a href="{{ path(vars.route, vars.parameters) }}">{{ vars.value }}</a>
-</td>
-{% endblock anchor_cell %}
-
-{% block actions_cell %}
-<td class="actions">
-{% for button in vars.buttons %}
-	{% if button.disabled %}
-	    <a href="javascript:void(0)" class="btn btn-xs btn-{{ button.class }} disabled" title="{{ button.label|trans }}">{{ block('action_button_label') }}</a>
-	{% else %}
-	    <a href="{{ path(button.route, button.parameters) }}" class="btn btn-xs btn-{{ button.class }}" title="{{ button.label|trans }}">{{ block('action_button_label') }}</a>
-	{% endif %}
-{% endfor %}
-</td>
-{% endblock actions_cell %}
-
 {% block action_button_label %}
 {% if button.icon|length > 0 %}<span class="glyphicon glyphicon-{{ button.icon }}"></span>{% else %}{{ button.label|trans }}{% endif %}
 {% endblock action_button_label %}
-
-{% block nested_actions_cell %}
-{{ block('actions_cell') }}
-{% endblock nested_actions_cell %}
-
-{% block nested_anchor_cell %}
-<td class="nested">
-    {% for class in vars.tree %}<i{% if class|length > 0 %} class="{{ class }}"{% endif %}></i>{% endfor -%}
-    <a href="{{ path(vars.route, vars.parameters) }}">{{ vars.value }}</a>
-</td>
-{% endblock nested_anchor_cell %}
