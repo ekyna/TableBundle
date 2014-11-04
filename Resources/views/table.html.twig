@@ -115,21 +115,23 @@
 </tbody>
 {% endblock table_body %}
 
-{% block boolean_cell_value %}{{ vars.label|trans }}{% endblock boolean_cell_value %}
+{# CELLS #}
+
+{% block boolean_cell_value %}{{ label|trans }}{% endblock boolean_cell_value %}
 
 {% block datetime_cell %}
-    <td{% if vars.sorted %} class="sorted"{% endif %}>
-        {% if vars.value is sameas(null) %}
+    <td{% if sorted %} class="sorted"{% endif %}>
+        {% if value is sameas(null) %}
             <em>{{ 'ekyna_core.value.undefined'|trans }}</em>
         {% else %}
-            {{ vars.value|localizeddate(vars.date_format, vars.time_format) }}
+            {{ value|localizeddate(date_format, time_format) }}
         {% endif %}
     </td>
 {% endblock datetime_cell %}
 
 {% block image_cell %}
 <td>
-    <img alt="thumbnail" src="{{ vars.value|imagine_filter('admin_table') }}" />
+    <img alt="thumbnail" src="{{ value|imagine_filter('admin_table') }}" />
 </td>
 {% endblock image_cell %}
 
