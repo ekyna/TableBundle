@@ -10,7 +10,6 @@
         <parameter key="table.factory.class">Ekyna\Component\Table\TableFactory</parameter>
         <parameter key="table.extension.class">Ekyna\Component\Table\Extension\DependencyInjection\DependencyInjectionExtension</parameter>
 
-        <parameter key="table.twig.table_extension.template">EkynaTableBundle::table.html.twig</parameter>
         <parameter key="table.twig.table_extension.class">Ekyna\Component\Table\Twig\TableExtension</parameter>
     </parameters>
 

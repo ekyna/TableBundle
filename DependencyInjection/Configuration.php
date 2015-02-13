@@ -20,8 +20,12 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('ekyna_table');
 
-        // template
-        // attribute_bag_name
+        $rootNode
+            ->children()
+                ->scalarNode('template')->defaultValue('EkynaTableBundle::table.html.twig')->end()
+                // TODO attribute_bag_name
+            ->end()
+        ;
 
         return $treeBuilder;
     }

@@ -24,5 +24,7 @@ class EkynaTableExtension extends Extension
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
+
+        $container->setParameter('table.twig.table_extension.template', $config['template']);
     }
 }
