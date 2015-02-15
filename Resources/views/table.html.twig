@@ -82,10 +82,20 @@
 {% block active_filters %}
 {% for filter in table.active_filters %}
 <a href="{{ ekyna_table_filter_remove_path(filter) }}" class="btn btn-xs btn-success">
-    <strong>{{ filter.vars.field|trans }}</strong>&nbsp;{{ filter.vars.operator }}&nbsp;&laquo;&nbsp;{{ filter.vars.value|trans }}&nbsp;&raquo;<span class="glyphicon glyphicon-minus-sign"></span>
+    <strong>{{ filter.vars.field|trans }}</strong>&nbsp;{{ filter.vars.operator }}&nbsp;&laquo;&nbsp;{{ block('active_filter_value') }}&nbsp;&raquo;<span class="glyphicon glyphicon-minus-sign"></span>
 </a>
 {% endfor %}
 {% endblock active_filters %}
+
+{% block active_filter_value %}
+{% if filter.vars.value is iterable -%}
+    {% for val in filter.vars.value -%}
+        {{- val|trans }}{% if not loop.last %}, {% endif -%}
+    {%- endfor %}
+{%- else -%}
+    {{- filter.vars.value|trans }}
+{%- endif %}
+{% endblock active_filter_value %}
 
 {% block table_head %}
 <thead>
