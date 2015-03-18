@@ -58,7 +58,7 @@ Table component integration.
                 parent::setDefaultOptions($resolver);
             
                 $resolver->setDefaults(array(
-                    'data_class' => 'Acme/DemoBundle/Entity/Brand',
+                    'data_class' => 'Acme\DemoBundle\Entity\Brand',
                 ));
             }
             
@@ -75,7 +75,7 @@ Table component integration.
             <tag name="table.type" alias="acme_demo_brand" />
         </service>
 
- 2. Create the controller
+ 3. Create the controller
  
         // src/Acme/DemoBundle/Controller/BrandController.php
         namespace Acme\Demo\Controller;
@@ -93,18 +93,18 @@ Table component integration.
                         'name' => 'my_brand_list,
                     ))*/
                     ->createBuilder('acme_demo_brand', array( // service
-                        'name' => 'my_brand_list,
+                        'name' => 'my_brand_list',
                     ))
                     ->getTable($request)
                 ;
                 
-                return $this->render('AcmeDemoBundle:Brand/index.html.twig', array(
+                return $this->render('AcmeDemoBundle:Brand:index.html.twig', array(
                     'brands' => $table->createView(),
                 ));
             }
         }
 
- 3. Create the twig template
+ 4. Create the twig template
  
         # src/Acme/DemoBundle/Resources/views/Brand/index.html.twig
         <!DOCTYPE html>
