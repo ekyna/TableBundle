@@ -10,7 +10,16 @@
         <parameter key="table.factory.class">Ekyna\Component\Table\TableFactory</parameter>
         <parameter key="table.extension.class">Ekyna\Component\Table\Extension\DependencyInjection\DependencyInjectionExtension</parameter>
 
+        <!-- @deprecated -->
         <parameter key="table.twig.table_extension.class">Ekyna\Component\Table\Twig\TableExtension</parameter>
+
+        <parameter key="templating.helper.table.class">Ekyna\Component\Table\Templating\Helper\TableHelper</parameter>
+        <parameter key="templating.table.engine.class">Ekyna\Component\Table\Extension\Templating\TemplatingRendererEngine</parameter>
+        <parameter key="templating.table.renderer.class">Ekyna\Component\Table\TableRenderer</parameter>
+
+        <parameter key="twig.table.engine.class">Ekyna\Component\Table\Twig\Renderer\TwigRendererEngine</parameter>
+        <parameter key="twig.table.renderer.class">Ekyna\Component\Table\Twig\Renderer\TwigRenderer</parameter>
+        <parameter key="twig.table.extension.class">Ekyna\Component\Table\Twig\Extension\TableExtension</parameter>
     </parameters>
 
     <services>
@@ -28,13 +37,38 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
         </service>
 
+        <!-- Templating -->
+        <service id="templating.helper.table" class="%templating.helper.table.class%">
+            <tag name="templating.helper" alias="table" />
+            <argument type="service" id="templating.table.renderer" />
+        </service>
+        <service id="templating.table.engine" class="%templating.table.engine.class%" public="false">
+            <argument type="service" id="templating.engine.php" />
+            <argument>%templating.helper.table.resources%</argument>
+        </service>
+        <service id="templating.table.renderer" class="%templating.table.renderer.class%" public="false">
+            <argument type="service" id="templating.table.engine" />
+        </service>
+
         <!-- TwigExtension -->
-        <service id="table.twig.ui_extension" class="%table.twig.table_extension.class%">
+        <!--<service id="table.twig.ui_extension" class="%table.twig.table_extension.class%">
             <argument type="service" id="twig" />
             <argument type="service" id="white_october_pagerfanta.view_factory" />
             <argument>%table.twig.table_extension.template%</argument>
             <tag name="twig.extension" />
+        </service>-->
+
+        <service id="twig.table.engine" class="%twig.table.engine.class%" public="false">
+            <argument>%twig.table.resources%</argument>
         </service>
+        <service id="twig.table.renderer" class="%twig.table.renderer.class%" public="false">
+            <argument type="service" id="twig.table.engine" />
+        </service>
+        <service id="twig.table.extension" class="%twig.table.extension.class%" public="false">
+            <argument type="service" id="twig.table.renderer" />
+            <tag name="twig.extension" />
+        </service>
+
 
         <!-- DependencyInjectionExtension -->
         <service id="table.extension" class="%table.extension.class%" public="false">

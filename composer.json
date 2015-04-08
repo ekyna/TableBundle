@@ -19,6 +19,7 @@
     "require" : {
         "php" : ">=5.3.3",
         "symfony/framework-bundle" : "~2.3",
+        "white-october/pagerfanta-bundle": "1.0.*",
         "ekyna/table" : "0.1.*@dev"
     },
     "autoload" : {

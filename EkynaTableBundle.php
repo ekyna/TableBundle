@@ -3,7 +3,8 @@
 namespace Ekyna\Bundle\TableBundle;
 
 use Ekyna\Bundle\TableBundle\DependencyInjection\Compiler\TablePass;
-use Ekyna\Component\Table\DependencyInjection\Compiler\TwigPathCompilerPass;
+use Ekyna\Bundle\TableBundle\DependencyInjection\Compiler\TwigPass;
+//use Ekyna\Component\Table\DependencyInjection\Compiler\TwigPathCompilerPass;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -18,7 +19,8 @@ class EkynaTableBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new TwigPathCompilerPass());
+        //$container->addCompilerPass(new TwigPathCompilerPass());
+        $container->addCompilerPass(new TwigPass());
         $container->addCompilerPass(new TablePass());
     }
 }

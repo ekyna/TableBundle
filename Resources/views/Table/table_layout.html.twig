@@ -1,0 +1,219 @@
+{% block table %}
+{% spaceless %}
+<div class="ekyna-table" data-options='{{ table.options|json_encode }}'>
+    {% if table.available_filters|length > 0 %}
+        <div class="table-filters">
+            <div class="row table-filters-available">
+                <div class="col-md-3">
+                    <span class="table-filters-title">{{ 'ekyna_table.available_filters'|trans }}</span>
+                </div>
+                <div class="col-md-9">
+                    <div class="table-filters-controls">{{ block('available_filters') }}</div>
+                </div>
+            </div>
+            {% if table.filter_form %}
+                <div class="row table-filters-form">
+                    <div class="col-md-3">
+                        <span class="table-filters-title">{{ 'ekyna_table.new_filter'|trans }} <strong>{{ table.filter_label|trans }}</strong></span>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="table-filters-controls">
+                            {{ bootstrap_set_style('inline') }}
+                            {{ form_start(table.filter_form) }}
+                            <div class="row form-body">
+                                <div class="col-md-3">{{ form_row(table.filter_form.operator) }}</div>
+                                <div class="col-md-6">{{ form_row(table.filter_form.value) }}</div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-success" style="margin-right:14px;"><span class="glyphicon glyphicon-plus"></span></button>
+                                    <a href="#" class="btn btn-danger table-filter-close"><span class="glyphicon glyphicon-remove"></span></a>
+                                </div>
+                            </div>
+                            {{ form_rest(table.filter_form) }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if table.active_filters|length > 0 %}
+                <div class="row table-filters-active">
+                    <div class="col-md-3">
+                        <span class="table-filters-title">{{ 'ekyna_table.active_filters'|trans }}</span>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="table-filters-controls">{{ block('active_filters') }}</div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+    {% if table.options.selector %}
+    <form method="post">
+        {% endif %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover{% if options.class %} {{ options.class }}{% endif %}">
+                {{ block('table_head') }}
+                {{ block('table_body') }}
+            </table>
+        </div>
+        {% if table.options.selector %}
+        <p style="text-align:center;">
+            <button type="submit" class="btn btn-primary table-selection-validate">
+                <span class="glyphicon glyphicon-ok"></span> {{ 'ekyna_table.validate'|trans }}
+            </button>
+        </p>
+    </form>
+    {% endif %}
+    {% if table.pager.nbPages > 1 %}
+        <div class="table-pager">
+            {{ ekyna_table_pager(table) }}
+        </div>
+    {% endif %}
+</div>
+{% endspaceless %}
+{% endblock table %}
+
+{% block available_filters %}
+{% for filter in table.available_filters %}
+    <a href="{{ ekyna_table_filter_add_path(filter) }}" class="btn btn-xs btn-primary">{{ filter.vars.label|trans }}<span class="glyphicon glyphicon-plus-sign"></span></a>
+{% endfor %}
+{% endblock available_filters %}
+
+{% block active_filters %}
+{% for filter in table.active_filters %}
+    <a href="{{ ekyna_table_filter_remove_path(filter) }}" class="btn btn-xs btn-success">
+        <strong>{{ filter.vars.field|trans }}</strong>&nbsp;{{ filter.vars.operator }}&nbsp;&laquo;&nbsp;{{ block('active_filter_value') }}&nbsp;&raquo;<span class="glyphicon glyphicon-minus-sign"></span>
+    </a>
+{% endfor %}
+{% endblock active_filters %}
+
+{% block active_filter_value %}
+{% if filter.vars.value is iterable -%}
+    {% for val in filter.vars.value -%}
+        {{- val|trans }}{% if not loop.last %}, {% endif -%}
+    {%- endfor %}
+{%- else -%}
+    {{- filter.vars.value|trans }}
+{%- endif %}
+{% endblock active_filter_value %}
+
+{% block table_head %}
+<thead>
+<tr>
+    {% for column in table.columns %}
+        {% if column.vars.sortable %}
+            <th class="sort{% if column.vars.sorted %} sorted{% endif %}">
+                <a href="{{ ekyna_table_sort_path(column) }}" class="{{ column.vars.sort_dir }}">{{ column.vars.label|trans }}</a>
+            </th>
+        {% else %}
+            <th>{{ column.vars.label|trans }}</th>
+        {% endif %}
+    {% endfor %}
+</tr>
+</thead>
+{% endblock table_head %}
+
+{% block table_body %}
+<tbody>
+{% if table.rows|length > 0 %}
+    {% for row in table.rows %}
+        {{ block('table_row') }}
+    {% endfor %}
+{% else %}
+    <tr><td colspan="{{ table.columns|length }}" style="text-align:center;font-style:italic;">{{ 'ekyna_table.no_results'|trans }}</td></tr>
+{% endif %}
+</tbody>
+{% endblock table_body %}
+
+{% block table_row %}
+    <tr data-id="{{ row.entityId }}">
+        {% for cell in row.cells %}
+            {{ ekyna_table_cell(cell) }}
+        {% endfor %}
+    </tr>
+{% endblock table_row %}
+
+{# CELLS #}
+
+{% block selector_cell %}
+    <td class="selector">
+        <input type="{{ input_type }}" name="{{ input_name }}" value="{{ value }}"{% if selected %} checked{% endif %} data-element='{{ data|json_encode }}' />
+    </td>
+{% endblock selector_cell %}
+
+{% block text_cell %}
+    <td{% if sorted %} class="sorted"{% endif %}>{{ value }}</td>
+{% endblock text_cell %}
+
+{% block number_cell %}{{ block('text_cell') }}{% endblock number_cell %}
+
+{% block boolean_cell %}
+    <td{% if sorted %} class="sorted"{% endif %}>
+        {% if route is not sameas(null) %}
+            <a href="{{ path(route, parameters) }}" class="label {{ class }}">{{ block('boolean_cell_value') }}</a>
+        {% else %}
+            <span class="label {{ class }}">{{ block('boolean_cell_value') }}</span>
+        {% endif %}
+    </td>
+{% endblock boolean_cell %}
+
+{% block boolean_cell_value %}{{ label|trans }}{% endblock boolean_cell_value %}
+
+{% block datetime_cell %}
+    <td{% if sorted %} class="sorted"{% endif %}>
+        {% if value is sameas(null) %}
+            <em>{{ 'ekyna_core.value.undefined'|trans }}</em>
+        {% else %}
+            {{ value|localizeddate(date_format, time_format) }}
+        {% endif %}
+    </td>
+{% endblock datetime_cell %}
+
+{% block image_cell %}
+    <td>
+        <img alt="thumbnail" src="{{ value|imagine_filter('admin_table') }}" />
+    </td>
+{% endblock image_cell %}
+
+{% block anchor_cell %}
+    <td{% if sorted %} class="sorted"{% endif %}>
+        <a href="{{ path(route, parameters) }}">{{ value }}</a>
+    </td>
+{% endblock anchor_cell %}
+
+{% block actions_cell %}
+    <td class="actions">
+        {% for button in buttons %}
+            {% if button.disabled %}
+                <a href="javascript:void(0)" class="btn btn-xs btn-{{ button.class }} disabled">{{ block('action_button_label') }}</a>
+            {% else %}
+                <a href="{{ path(button.route, button.parameters) }}" class="btn btn-xs btn-{{ button.class }}">{{ block('action_button_label') }}</a>
+            {% endif %}
+        {% endfor %}
+    </td>
+{% endblock actions_cell %}
+
+{% block action_button_label %}
+    {% if button.icon|length > 0 %}<span class="glyphicon glyphicon-{{ button.icon }}"></span>{% else %}{{ button.label|trans }}{% endif %}
+{% endblock action_button_label %}
+
+{% block nested_actions_cell %}
+    {{ block('actions_cell') }}
+{% endblock nested_actions_cell %}
+
+{% block nested_anchor_cell %}
+    <td class="nested">
+        {#% for class in tree %}<i{% if class|length > 0 %} class="{{ class }}"{% endif %}></i>{% endfor -%}
+        {% if children_ids|length > 0 -%}
+            <a href="javascript: void(0);" class="toggle toggle-close" data-children="{{ children_ids|json_encode }}"></a>
+        {%- else -%}
+            <i class="no-children"></i>
+        {%- endif %#}
+        {%- for node in nodes %}
+            {%- if node.type == 'button' -%}
+                <a href="javascript: void(0);" class="{{ node.class }}" data-children="{{ node.children }}"></a>
+            {%- else -%}
+                <i class="{{ node.class }}"></i>
+            {%- endif -%}
+        {% endfor -%}
+        <a href="{{ path(route, parameters) }}">{{ value }}</a>
+    </td>
+{% endblock nested_anchor_cell %}
