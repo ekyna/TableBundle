@@ -75,6 +75,9 @@
         <service id="table.column_type.boolean" class="Ekyna\Component\Table\Extension\Core\Type\Column\BooleanType">
             <tag name="table.column_type" alias="boolean" />
         </service>
+        <service id="table.column_type.choice" class="Ekyna\Component\Table\Extension\Core\Type\Column\ChoiceType">
+            <tag name="table.column_type" alias="choice" />
+        </service>
         <service id="table.column_type.image" class="Ekyna\Component\Table\Extension\Core\Type\Column\ImageType">
             <tag name="table.column_type" alias="image" />
         </service>
@@ -89,6 +92,9 @@
         <service id="table.filter_type.entity" class="Ekyna\Component\Table\Extension\Core\Type\Filter\EntityType">
             <argument type="service" id="doctrine.orm.default_entity_manager" />
             <tag name="table.filter_type" alias="entity" />
+        </service>
+        <service id="table.filter_type.choice" class="Ekyna\Component\Table\Extension\Core\Type\Filter\ChoiceType">
+            <tag name="table.filter_type" alias="choice" />
         </service>
         <service id="table.filter_type.boolean" class="Ekyna\Component\Table\Extension\Core\Type\Filter\BooleanType">
             <tag name="table.filter_type" alias="boolean" />
