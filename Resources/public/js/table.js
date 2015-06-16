@@ -1,4 +1,22 @@
-(function (window, $) {
+(function(root, factory) {
+    "use strict";
+
+    // CommonJS module is defined
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = factory(require('jquery'));
+    }
+    // AMD module is defined
+    else if (typeof define === 'function' && define.amd) {
+        define('ekyna-table', ['jquery'], function($) {
+            return factory($);
+        });
+    } else {
+        // planted over the root!
+        root.EkynaTable = factory(root.jQuery);
+    }
+
+}(this, function($) {
+    "use strict";
 
     var EkynaTable = function (elem, options) {
         this.elem = elem;
@@ -27,6 +45,12 @@
                 this.initSelector();
             }
             this.initTreeNodes();
+
+            this.$elem.on('click', '.table-filter-close', function (e) {
+                $(this).parents('.table-filters-form').remove();
+                e.stopPropagation();
+                e.preventDefault();
+            });
 
             return this;
         },
@@ -102,9 +126,9 @@
         });
     };
 
-    window.EkynaTable = EkynaTable;
+    return EkynaTable;
 
-    $(window.document).ready(function () {
+    /*$(function () {
         $('.table-filter-close').on('click', function (e) {
             $(this).parents('.table-filters-form').remove();
             e.stopPropagation();
@@ -112,5 +136,5 @@
         });
 
         $('.ekyna-table').ekynaTable();
-    });
-})(window, jQuery);
+    });*/
+}));
