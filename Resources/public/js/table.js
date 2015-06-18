@@ -18,9 +18,8 @@
 }(this, function($) {
     "use strict";
 
-    var EkynaTable = function (elem, options) {
-        this.elem = elem;
-        this.$elem = $(elem);
+    var EkynaTable = function ($elem, options) {
+        this.$elem = typeof $elem == 'jQuery' ? $elem : $($elem);
         this.options = options || [];
         this.metadata = this.$elem.data('options');
     };
@@ -120,21 +119,12 @@
 
     EkynaTable.defaults = EkynaTable.prototype.defaults;
 
-    $.fn.ekynaTable = function (options) {
-        return this.each(function () {
-            new EkynaTable(this, options).init();
-        });
+    return {
+        create: function($element, options) {
+            var table = new EkynaTable($element, options);
+            table.init();
+            return table;
+        }
     };
 
-    return EkynaTable;
-
-    /*$(function () {
-        $('.table-filter-close').on('click', function (e) {
-            $(this).parents('.table-filters-form').remove();
-            e.stopPropagation();
-            e.preventDefault();
-        });
-
-        $('.ekyna-table').ekynaTable();
-    });*/
 }));

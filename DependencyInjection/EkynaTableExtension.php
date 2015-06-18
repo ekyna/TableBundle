@@ -4,6 +4,7 @@ namespace Ekyna\Bundle\TableBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
@@ -12,7 +13,7 @@ use Symfony\Component\DependencyInjection\Loader;
  * @package Ekyna\Bundle\TableBundle\DependencyInjection
  * @author Étienne Dauvergne <contact@ekyna.com>
  */
-class EkynaTableExtension extends Extension
+class EkynaTableExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * {@inheritDoc}
@@ -26,5 +27,28 @@ class EkynaTableExtension extends Extension
         $loader->load('services.xml');
 
         $container->setParameter('table.twig.table_extension.template', $config['template']);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function prepend(ContainerBuilder $container)
+    {
+        $bundles = $container->getParameter('kernel.bundles');
+        if (array_key_exists('EkynaAdminBundle', $bundles)) {
+            $this->configureEkynaAdminBundleBundle($container);
+        }
+    }
+
+    /**
+     * Configures the TwigBundle.
+     *
+     * @param ContainerBuilder $container
+     */
+    protected function configureEkynaAdminBundleBundle(ContainerBuilder $container)
+    {
+        $container->prependExtensionConfig('ekyna_admin', array(
+            'css_inputs' => array('@EkynaTableBundle/Resources/public/css/table.css'),
+        ));
     }
 }
