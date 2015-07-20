@@ -78,6 +78,9 @@
         <service id="table.column_type.choice" class="Ekyna\Component\Table\Extension\Core\Type\Column\ChoiceType">
             <tag name="table.column_type" alias="choice" />
         </service>
+        <service id="table.column_type.country" class="Ekyna\Component\Table\Extension\Core\Type\Column\CountryType">
+            <tag name="table.column_type" alias="country" />
+        </service>
         <service id="table.column_type.image" class="Ekyna\Component\Table\Extension\Core\Type\Column\ImageType">
             <tag name="table.column_type" alias="image" />
         </service>
@@ -95,6 +98,9 @@
         </service>
         <service id="table.filter_type.choice" class="Ekyna\Component\Table\Extension\Core\Type\Filter\ChoiceType">
             <tag name="table.filter_type" alias="choice" />
+        </service>
+        <service id="table.filter_type.country" class="Ekyna\Component\Table\Extension\Core\Type\Filter\CountryType">
+            <tag name="table.filter_type" alias="country" />
         </service>
         <service id="table.filter_type.boolean" class="Ekyna\Component\Table\Extension\Core\Type\Filter\BooleanType">
             <tag name="table.filter_type" alias="boolean" />
