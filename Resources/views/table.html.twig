@@ -134,7 +134,7 @@
 
 {% block datetime_cell %}
     <td{% if sorted %} class="sorted"{% endif %}>
-        {% if value is sameas(null) %}
+        {% if value is same as(null) %}
             <em>{{ 'ekyna_core.value.undefined'|trans }}</em>
         {% else %}
             {{ value|localizeddate(date_format, time_format) }}

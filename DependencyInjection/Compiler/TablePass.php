@@ -11,6 +11,9 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
  */
 class TablePass implements CompilerPassInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('table.extension')) {
@@ -20,7 +23,7 @@ class TablePass implements CompilerPassInterface
         $definition = $container->getDefinition('table.extension');
 
         // table.type
-        $types = array();
+        $types = [];
         foreach ($container->findTaggedServiceIds('table.type') as $serviceId => $tag) {
             $alias = isset($tag[0]['alias']) ? $tag[0]['alias'] : $serviceId;
             $types[$alias] = $serviceId;
@@ -28,7 +31,7 @@ class TablePass implements CompilerPassInterface
         $definition->replaceArgument(1, $types);
 
         // table.column_type
-        $types = array();
+        $types = [];
         foreach ($container->findTaggedServiceIds('table.column_type') as $serviceId => $tag) {
             $alias = isset($tag[0]['alias']) ? $tag[0]['alias'] : $serviceId;
             $types[$alias] = $serviceId;
@@ -36,7 +39,7 @@ class TablePass implements CompilerPassInterface
         $definition->replaceArgument(2, $types);
 
         // table.filter_type
-        $types = array();
+        $types = [];
         foreach ($container->findTaggedServiceIds('table.filter_type') as $serviceId => $tag) {
             $alias = isset($tag[0]['alias']) ? $tag[0]['alias'] : $serviceId;
             $types[$alias] = $serviceId;
