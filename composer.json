@@ -19,7 +19,7 @@
     "require" : {
         "php" : ">=5.3.3",
         "symfony/framework-bundle" : "~2.7",
-        "ekyna/table" : "0.4.x-dev"
+        "ekyna/table" : "1.0.x-dev"
     },
     "autoload" : {
         "psr-4" : {
@@ -28,7 +28,7 @@
     },
     "extra" : {
         "branch-alias" : {
-            "dev-master" : "0.4.x-dev"
+            "dev-master" : "1.0.x-dev"
         }
     }
 }
