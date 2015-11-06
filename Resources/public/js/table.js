@@ -74,20 +74,25 @@
         initTreeNodes: function() {
             var t = this;
 
-            function toggle($button) {
+            function toggle($button, recursive) {
                 if ($button.hasClass('toggle-open')) {
-                    open($button);
+                    open($button, recursive);
                 } else if ($button.hasClass('toggle-close')) {
                     close($button);
                 }
             }
 
-            function open($button) {
+            function open($button, recursive) {
                 if (!$button.hasClass('toggle-open')) {
                     return;
                 }
                 $($button.data('children')).each(function(index, id) {
-                    t.$elem.find('tr[data-id=' + id + ']').show();
+                    var $tr = t.$elem.find('tr[data-id=' + id + ']').show();
+                    if (recursive) {
+                        $tr.find('a.toggle').each(function(index, button) {
+                            open($(button), recursive);
+                        });
+                    }
                 });
                 $button.removeClass('toggle-open').addClass('toggle-close');
             }
@@ -97,10 +102,10 @@
                     return;
                 }
                 $($button.data('children')).each(function(index, id) {
-                    t.$elem.find('tr[data-id=' + id + ']').hide()
-                        .find('a.toggle').each(function(index, button) {
-                            close($(button));
-                        });
+                    var $tr = t.$elem.find('tr[data-id=' + id + ']').hide();
+                    $tr.find('a.toggle').each(function (index, button) {
+                        close($(button));
+                    });
                 });
                 $button.removeClass('toggle-close').addClass('toggle-open');
             }
@@ -108,7 +113,8 @@
             t.$elem.find('td.nested a.toggle').bind('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                toggle($(e.target));
+                console.log('Shift : ' + e.shiftKey);
+                toggle($(e.target), e.shiftKey);
             });
 
             t.$elem.find('td.nested > a.toggle-close').each(function(index, button) {
