@@ -113,7 +113,6 @@
             t.$elem.find('td.nested a.toggle').bind('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Shift : ' + e.shiftKey);
                 toggle($(e.target), e.shiftKey);
             });
 
