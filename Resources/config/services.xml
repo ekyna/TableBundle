@@ -17,7 +17,7 @@
         <!-- TableRegistry -->
         <service id="table.registry" class="%table.registry.class%">
             <argument type="collection">
-                <argument type="service" id="table.extension" />
+                <argument type="service" id="table.extension"/>
             </argument>
         </service>
 
@@ -54,6 +54,9 @@
         </service>
 
         <!-- Column types -->
+        <service id="table.column_type.id" class="Ekyna\Component\Table\Extension\Core\Type\Column\IdType">
+            <tag name="table.column_type" alias="id" />
+        </service>
         <service id="table.column_type.selector" class="Ekyna\Component\Table\Extension\Core\Type\Column\SelectorType">
             <tag name="table.column_type" alias="selector" />
         </service>
