@@ -126,6 +126,12 @@
 {% endblock table_body %}
 
 {# CELLS #}
+{% block number_cell %}
+    <td class="text-right{% if sorted %} sorted{% endif %}">
+        {{- value|round(precision)|localizednumber }}{% if append is not same as (null) %} {{ append }}{% endif -%}
+    </td>
+{% endblock number_cell %}
+
 {% block choice_cell %}
     <td{% if sorted %} class="sorted"{% endif %}>{{ label|trans|raw }}</td>
 {% endblock choice_cell %}
