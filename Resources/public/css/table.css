@@ -107,16 +107,20 @@
     margin-top: 6px;
 }
 
+.table td.actions {
+    white-space: nowrap;
+}
+
 .table td.actions a {
     margin: 0 8px 0 0;
 }
 
 .table td.actions a:last-child {
-    margin-right: 0px;
+    margin-right: 0;
 }
 
 .table td.actions .glyphicon {
-    margin-right: 0px;
+    margin-right: 0;
 }
 
 /**
