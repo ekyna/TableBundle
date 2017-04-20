@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\TableBundle\Extension\Type\Column;
 
 use Ekyna\Component\Table\Column\AbstractColumnType;
@@ -17,9 +19,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class PriceType extends AbstractColumnType
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setDefaults([
@@ -34,7 +36,7 @@ class PriceType extends AbstractColumnType
     /**
      * @inheritDoc
      */
-    public function buildCellView(CellView $view, ColumnInterface $column, RowInterface $row, array $options)
+    public function buildCellView(CellView $view, ColumnInterface $column, RowInterface $row, array $options): void
     {
         if (!empty($path = $options['currency_path'])) {
             $currency = $row->getData($path);
@@ -46,9 +48,9 @@ class PriceType extends AbstractColumnType
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return PropertyType::class;
     }

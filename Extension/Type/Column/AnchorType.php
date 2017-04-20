@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\TableBundle\Extension\Type\Column;
 
 use Ekyna\Component\Table\Column\AbstractColumnType;
@@ -8,6 +10,8 @@ use Ekyna\Component\Table\Extension\Core\Type\Column\TextType;
 use Ekyna\Component\Table\Source\RowInterface;
 use Ekyna\Component\Table\View\CellView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use function array_diff_key;
 
 /**
  * Class AnchorType
@@ -19,45 +23,50 @@ class AnchorType extends AbstractColumnType
     /**
      * @inheritDoc
      */
-    public function buildCellView(CellView $view, ColumnInterface $column, RowInterface $row, array $options)
+    public function buildCellView(CellView $view, ColumnInterface $column, RowInterface $row, array $options): void
     {
-        $parameters = $options['route_parameters'];
-        if (!empty($options['route_parameters_map'])) {
-            foreach ($options['route_parameters_map'] as $parameter => $propertyPath) {
+        if (isset($view->vars['path']) || (isset($view->vars['route']) && isset($view->vars['parameters']))) {
+            return;
+        }
+
+        $parameters = $options['parameters'];
+        if (!empty($options['parameters_map'])) {
+            foreach ($options['parameters_map'] as $parameter => $propertyPath) {
                 if (null !== $value = $row->getData($propertyPath)) {
                     $parameters[$parameter] = $value;
                 }
             }
 
-            if (0 < count(array_diff_key($options['route_parameters_map'], $parameters))) {
+            if (0 < count(array_diff_key($options['parameters_map'], $parameters))) {
                 return;
             }
         }
 
-        $view->vars['route'] = $options['route_name'];
+        $view->vars['route']      = $options['route'];
         $view->vars['parameters'] = $parameters;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
-            ->setRequired('route_name')
+            ->setDefined('route_name')
             ->setDefaults([
-                'route_parameters'     => [],
-                'route_parameters_map' => [],
+                'route'          => null,
+                'parameters'     => [],
+                'parameters_map' => [],
             ])
-            ->setAllowedTypes('route_name', 'string')
-            ->setAllowedTypes('route_parameters', 'array')
-            ->setAllowedTypes('route_parameters_map', 'array');
+            ->setAllowedTypes('route', ['string', 'null'])
+            ->setAllowedTypes('parameters', 'array')
+            ->setAllowedTypes('parameters_map', 'array');
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return TextType::class;
     }

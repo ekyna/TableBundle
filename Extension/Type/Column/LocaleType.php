@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\TableBundle\Extension\Type\Column;
 
 use Ekyna\Component\Table\Column\AbstractColumnType;
 use Ekyna\Component\Table\Extension\Core\Type\Column\ChoiceType;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Locales;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use function array_flip;
 
 /**
  * Class LocaleType
@@ -15,27 +19,27 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class LocaleType extends AbstractColumnType
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'choices' => array_flip(Intl::getLocaleBundle()->getNames()),
+            'choices' => array_flip(Locales::getNames()),
         ]);
     }
 
     /**
      * @inheritDoc
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'choice';
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return ChoiceType::class;
     }

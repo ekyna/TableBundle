@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\TableBundle\Extension\Type\Filter;
 
 use Ekyna\Component\Table\Extension\Core\Type\Filter\ChoiceType;
 use Ekyna\Component\Table\Filter\AbstractFilterType;
-use Symfony\Component\Intl\Intl;
+use Symfony\Component\Intl\Countries;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use function array_flip;
 
 /**
  * Class CountryType
@@ -14,20 +18,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CountryType extends AbstractFilterType
 {
-    /**
-     * @inheritdoc
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'choices' => array_flip(Intl::getRegionBundle()->getCountryNames()),
+            'choices' => array_flip(Countries::getNames()),
         ]);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getParent()
+    public function getParent(): ?string
     {
         return ChoiceType::class;
     }

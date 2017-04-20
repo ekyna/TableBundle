@@ -1,12 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\TableBundle\DependencyInjection;
 
+use Ekyna\Component\Table\Bridge\Twig\TableRenderer;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader;
+
+use function array_key_exists;
 
 /**
  * Class EkynaTableExtension
@@ -16,27 +21,27 @@ use Symfony\Component\DependencyInjection\Loader;
 class EkynaTableExtension extends Extension implements PrependExtensionInterface
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.xml');
+        $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('table.php');
 
         $container
-            ->getDefinition('table.twig.renderer')
+            ->getDefinition(TableRenderer::class)
             ->setArgument(2, $config['template']);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function prepend(ContainerBuilder $container)
     {
         $bundles = $container->getParameter('kernel.bundles');
+
         if (array_key_exists('EkynaAdminBundle', $bundles)) {
             $this->configureEkynaAdminBundleBundle($container);
         }

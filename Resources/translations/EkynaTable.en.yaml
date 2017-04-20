@@ -10,6 +10,7 @@ export: Export
 per_page: Per page
 apply: Apply
 undefined: Undefined
+actions: Actions
 profile:
     select: Select a profil
     name: New profil
@@ -21,3 +22,10 @@ profile:
 error:
     profile_required: Please select a profil.
     name_required: Please enter a name for this profil.
+nested:
+    add: Add
+    move_up: Move up
+    move_down: Move down
+value:
+    yes: Yes
+    no: No

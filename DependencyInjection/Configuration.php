@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\TableBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -13,18 +15,19 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('ekyna_table');
+        $builder = new TreeBuilder('ekyna_table');
 
-        $rootNode
+        $root = $builder->getRootNode();
+
+        $root
             ->children()
                 ->scalarNode('template')->defaultValue('@EkynaTable/table.html.twig')->end()
             ->end();
 
-        return $treeBuilder;
+        return $builder;
     }
 }

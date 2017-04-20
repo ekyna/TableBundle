@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\TableBundle\Extension\Type\Column;
 
 use Doctrine\Common\Collections\Collection;
@@ -8,6 +10,11 @@ use Ekyna\Component\Table\Column\ColumnInterface;
 use Ekyna\Component\Table\Source\RowInterface;
 use Ekyna\Component\Table\View\CellView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+
+use function array_map;
+use function implode;
+use function json_encode;
 
 /**
  * Class NestedAnchorType
@@ -16,16 +23,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class NestedAnchorType extends AbstractColumnType
 {
-    /**
-     * @var \Symfony\Component\PropertyAccess\PropertyAccessorInterface
-     */
-    private $propertyAccessor;
+    private PropertyAccessorInterface $propertyAccessor;
 
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
             ->setDefaults([
@@ -44,11 +48,11 @@ class NestedAnchorType extends AbstractColumnType
     /**
      * @inheritDoc
      */
-    public function buildCellView(CellView $view, ColumnInterface $column, RowInterface $row, array $options)
+    public function buildCellView(CellView $view, ColumnInterface $column, RowInterface $row, array $options): void
     {
         $this->propertyAccessor = $row->getPropertyAccessor();
 
-        $data = $row->getData();
+        $data = $row->getData(null);
 
         $nodes = $this->getTreeNodes($data, $options);
 
@@ -56,9 +60,15 @@ class NestedAnchorType extends AbstractColumnType
     }
 
     /**
-     * @inheritdoc
+     * Builds the tree nodes.
+     *
+     * @param mixed $data
+     * @param array $options
+     * @param int   $level
+     *
+     * @return array
      */
-    private function getTreeNodes($data, array $options, $level = 0)
+    private function getTreeNodes($data, array $options, int $level = 0): array
     {
         $nodes = [];
 
@@ -108,7 +118,7 @@ class NestedAnchorType extends AbstractColumnType
      *
      * @return array
      */
-    private function getChildrenIds($data, array $options)
+    private function getChildrenIds($data, array $options): array
     {
         $children = $this->propertyAccessor->getValue($data, $options['children_property_path']);
         if ($children instanceof Collection) {
@@ -124,9 +134,9 @@ class NestedAnchorType extends AbstractColumnType
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return AnchorType::class;
     }

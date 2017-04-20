@@ -19,7 +19,7 @@
         {# COLUMNS, ROWS AND CELLS #}
         <div class="table-responsive">
             {% set attr = table.vars.attr|default({}) %}
-            {% set classes = attr.class|default('table table-alt-head table-striped table-hover') %}
+            {% set classes = attr.class|default('') %}
             {% if options.class %}{% set classes = (classes ~ ' ' ~ options.class)|trim %}{% endif %}
             {% set attr = attr|merge({'class': classes}) %}
             <table{{ block('attributes') }}>
@@ -44,7 +44,7 @@
     {% if table.vars.errors is not empty -%}
         {% for error in table.vars.errors -%}
             <div class="alert alert-danger">
-                {{ error.message|trans(error.parameters, error.translationDomain) }}
+                {%- if error.transDomain is same as(false) %}{{ error.message }}{% else %}{{ error.message|trans(error.parameters, error.transDomain) }}{% endif -%}
             </div>
         {%- endfor %}
     {%- endif %}
@@ -69,7 +69,7 @@
         <div class="col-md-2">
             <span class="filters-title">
                 {{ 'new_filter'|trans({}, 'EkynaTable') }}
-                <strong>{{ table.filter_label|trans }}</strong>
+                <strong>{{ table.filter_label }}</strong>
             </span>
         </div>
         <div class="col-md-10">
@@ -113,7 +113,7 @@
 
 
 {%- block table_head_column_label -%}
-    {{ head.vars.label|trans({}, head.vars.translation_domain) }}
+{% if head.vars.trans_domain is same as(false) %}{{ head.vars.label }}{% else %}{{ head.vars.label|trans({}, head.vars.trans_domain) }}{% endif %}
 {%- endblock table_head_column_label -%}
 
 
@@ -157,7 +157,7 @@
                 <option value="" disabled selected>{{ 'select_action'|trans({}, 'EkynaTable') }}</option>
                 {% for choice in table.ui.batch.choices %}
                     <option value="{{ choice.value }}">
-                        {{ choice.label|trans|raw }}
+                        {{ choice.label|trans|raw }}{# TODO trans domain #}
                     </option>
                 {% endfor %}
             </select>
@@ -214,7 +214,7 @@
                             <input name="{{ table.ui.config.column.name }}"
                                    value="{{ choice.value }}" type="checkbox"
                                     {% if choice.active %} checked="checked"{% endif %}>
-                            {{ choice.label|trans }}
+                            {{ choice.label|trans }}{# TODO trans domain #}
                         </label>
                     </div>
                     {% endfor %}
@@ -324,7 +324,7 @@
 {% for filter in table.available_filters %}
 <a href="{{ filter.vars.add_filter_href }}"
    class="btn btn-xs btn-primary">
-    {{ filter.vars.label|trans({}, filter.vars.translation_domain) }}
+    {% if filter.vars.trans_domain is same as(false) %}{{ filter.vars.label }}{% else %}{{ filter.vars.label|trans({}, filter.vars.trans_domain) }}{% endif %}
     <span class="glyphicon glyphicon-plus-sign"></span>
 </a>
 {% endfor %}
@@ -337,7 +337,9 @@
 {% for filter in table.active_filters %}
 <a href="{{ filter.vars.remove_filter_href }}"
    class="btn btn-xs btn-success">
-    <strong>{{ filter.vars.label|trans({}, filter.vars.translation_domain) }}</strong>&nbsp;
+    <strong>
+        {%- if filter.vars.trans_domain is same as(false) %}{{ filter.vars.label }}{% else %}{{ filter.vars.label|trans({}, filter.vars.trans_domain) }}{% endif -%}
+    </strong>&nbsp;
     <em>{{ filter.vars.operator }}&nbsp;</em>
     &laquo;&nbsp;{{ block('active_filter_value') }}&nbsp;&raquo;
     <span class="glyphicon glyphicon-minus-sign"></span>
@@ -348,13 +350,25 @@
 
 {% block active_filter_value %}
 {% apply spaceless %}
-    {% if filter.vars.value is iterable -%}
-    {% for val in filter.vars.value -%}
-        {{- val|trans({}, filter.vars.translation_domain) }}{% if not loop.last %}, {% endif -%}
-    {%- endfor %}
-{%- else -%}
-    {{- filter.vars.value|trans({}, filter.vars.translation_domain) }}
-{%- endif %}
+    {%- if filter.vars.trans_domain is same as(false) -%}
+        {%- if filter.vars.value is iterable -%}
+        {%- for val in filter.vars.value -%}
+            {{- val -}}
+            {%- if not loop.last %}, {% endif -%}
+        {%- endfor -%}
+        {%- else -%}
+            {{- filter.vars.value -}}
+        {%- endif -%}
+    {%- else -%}
+        {%- if filter.vars.value is iterable -%}
+            {%- for val in filter.vars.value -%}
+                {{- val|trans({}, filter.vars.trans_domain) -}}
+                {%- if not loop.last %}, {% endif -%}
+            {%- endfor -%}
+        {%- else -%}
+            {{- filter.vars.value|trans({}, filter.vars.trans_domain) -}}
+        {%- endif %}
+    {%- endif -%}
 {% endapply %}
 {% endblock active_filter_value %}
 
@@ -363,22 +377,22 @@
 
 
 {%- block number_cell -%}
-    {{- value|round(precision)|localizednumber -}}
+    {{- value|round(precision)|format_number -}}
     {%- if append is not same as (null) %}&nbsp;{{ append }}{% endif -%}
 {%- endblock number_cell -%}
 
 
 {%- block price_cell -%}
-    {{- value|localizedcurrency(currency) -}}
+    {{- value|format_currency(currency) -}}
 {%- endblock price_cell -%}
 
 
 {%- block choice_cell_value -%}
     {%- if choice.label is defined -%}
-        {%- if translation_domain is not same as(false) -%}
-            {{ choice.label|trans({}, translation_domain)|raw }}
-        {%- else -%}
+        {%- if trans_domain is same as(false) -%}
             {{ choice.label|raw }}
+        {%- else -%}
+            {{ choice.label|trans({}, trans_domain)|raw }}
         {%- endif -%}
     {%- else -%}
         {{ choice.value }}
@@ -404,13 +418,15 @@
 {%- endblock entity_cell_value -%}
 
 
-{%- block boolean_cell_value %}{{ label|trans({}, translation_domain) }}{% endblock boolean_cell_value -%}
+{%- block boolean_cell_value -%}
+    {%- if trans_domain is same as(false) %}{{ label }}{% else %}{{ label|trans({}, trans_domain) }}{% endif -%}
+{%- endblock boolean_cell_value -%}
 
 {%- block date_time_cell -%}
     {%- if value is same as(null) -%}
         <em>{{ 'undefined'|trans({}, 'EkynaTable') }}</em>
     {%- else -%}
-        {{- value|localizeddate(date_format, time_format) -}}
+        {{- value|format_datetime(date_format, time_format) -}}
     {%- endif -%}
 {%- endblock date_time_cell -%}
 
@@ -418,7 +434,9 @@
 {%- block anchor_cell -%}
     {%- if value is same as(null) -%}
         &nbsp;
-    {%- elseif route is defined -%}
+    {%- elseif path is defined and path is not null -%}
+        <a href="{{ path }}">{{ value|raw }}</a>
+    {%- elseif route is defined and route is not null -%}
         <a href="{{ path(route, parameters) }}">{{ value|raw }}</a>
     {%- else -%}
         {{ value|raw }}
@@ -429,14 +447,19 @@
 {%- block actions_cell -%}
     {%- for button in buttons -%}
         {%- if button.disabled -%}
-            <a href="javascript:void(0)" class="btn btn-xs btn-{{ button.class }} disabled">
+            <a href="javascript:void(0)" class="btn btn-xs btn-{{ button.theme }} disabled">
                 {{- block('action_button_label') -}}
             </a>
         {%- else -%}
             <a href="{{ button.route ? path(button.route, button.parameters) : button.path }}"
-               class="btn btn-xs btn-{{ button.class }}"
-               title="{{ button.label|trans({}, translation_domain) }}"
-               {%- if button.confirm is not empty %} onclick="return confirm('{{ button.confirm|trans({}, translation_domain)|e('js') }}')"{% endif -%}
+               class="btn btn-xs btn-{{ button.theme }}"
+               {% if button.trans_domain is same as(false) -%}
+                   title="{{ button.label }}"
+                   {%- if button.confirm is not empty %} onclick="return confirm('{{ button.confirm|e('js') }}')"{% endif -%}
+               {%- else -%}
+                   title="{{ button.label|trans({}, button.trans_domain) }}"
+                   {%- if button.confirm is not empty %} onclick="return confirm('{{ button.confirm|trans({}, trans_domain)|e('js') }}')"{% endif -%}
+               {%- endif %}
                {%- if button.target is not empty %} target="{{ button.target }}"{% endif %}>
                 {{- block('action_button_label') -}}
             </a>
@@ -449,7 +472,7 @@
     {%- if button.icon|length > 0 -%}
         <span class="{{ button.fa_icon ? 'fa fa-' : 'glyphicon glyphicon-' }}{{ button.icon }}"></span>
     {%- else -%}
-        {{ button.label|trans({}, translation_domain) }}
+    {% if button.trans_domain is same as(false) -%}{{ button.label }}{% else %}{{ button.label|trans({}, button.trans_domain) }}{% endif %}
     {%- endif -%}
 {%- endblock action_button_label -%}
 
@@ -467,5 +490,9 @@
             <i class="{{ node.class }}"></i>
         {%- endif -%}
     {%- endfor -%}
+    {% if path is defined -%}
+    <a href="{{ path }}">{{ value }}</a>
+    {%- else -%}
     <a href="{{ path(route, parameters) }}">{{ value }}</a>
+    {%- endif %}
 {%- endblock nested_anchor_cell -%}

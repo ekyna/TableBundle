@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\TableBundle;
 
 use Ekyna\Bundle\TableBundle\DependencyInjection\Compiler\TablePass;
@@ -15,11 +17,14 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class EkynaTableBundle extends Bundle
 {
+    /**
+     * @inheritDoc
+     */
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
 
         $container->addCompilerPass(new TwigPathCompilerPass());
-        $container->addCompilerPass(new TablePass(), PassConfig::TYPE_BEFORE_REMOVING);
+        $container->addCompilerPass(new TablePass(), PassConfig::TYPE_BEFORE_REMOVING, -1024);
     }
 }
