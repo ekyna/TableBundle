@@ -1,159 +1,430 @@
 {% extends "@table/table.html.twig" %}
 
+
 {% block table %}
 {% spaceless %}
-<div class="ekyna-table" data-options='{{ table.options|json_encode }}'>
-{% if table.available_filters|length > 0 %}
-    <div class="table-filters">
-        <div class="row table-filters-available">
-            <div class="col-md-3">
-                <span class="table-filters-title">{{ 'ekyna_table.available_filters'|trans }}</span>
-            </div>
-            <div class="col-md-9">
-                <div class="table-filters-controls">{{ block('available_filters') }}</div>
-            </div>
+<div class="ekyna-table">
+
+    {# FILTERS #}
+    {{ block('table_filters') }}
+
+    {# FORM START for selection, batch or export #}
+    {% if table.ui.select %}
+    <form name="{{ table.vars.name }}" method="GET">
+    {% endif %}
+
+        {# COLUMNS, ROWS AND CELLS #}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover{% if options.class %} {{ options.class }}{% endif %}">
+                {{ block('table_head') }}
+                {{ block('table_body') }}
+            </table>
         </div>
-        {% if table.filter_form %}
-        <div class="row table-filters-form">
-            <div class="col-md-3">
-                <span class="table-filters-title">{{ 'ekyna_table.new_filter'|trans }} <strong>{{ table.filter_label|trans }}</strong></span>
-            </div>
-            <div class="col-md-9">
-                <div class="table-filters-controls">
-                    {{ bootstrap_set_style('inline') }}
-                    {{ form_start(table.filter_form) }}
-                    <div class="row form-body">
-                        <div class="col-md-3">{{ form_row(table.filter_form.operator) }}</div>
-                        <div class="col-md-6">{{ form_row(table.filter_form.value) }}</div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-success" style="margin-right:14px;"><span class="glyphicon glyphicon-plus"></span></button>
-                            <a href="#" class="btn btn-danger table-filter-close"><span class="glyphicon glyphicon-remove"></span></a>
-                        </div>
-                    </div>
-                    {{ form_rest(table.filter_form) }}
-                </div>
-            </div>
-        </div>
-        {% endif %}
-        {% if table.active_filters|length > 0 %}
-        <div class="row table-filters-active">
-            <div class="col-md-3">
-                <span class="table-filters-title">{{ 'ekyna_table.active_filters'|trans }}</span>
-            </div>
-            <div class="col-md-9">
-                <div class="table-filters-controls">{{ block('active_filters') }}</div>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-{% endif %}
-{% if table.options.selector %}
-<form method="post">
-{% endif %}
-    <div class="table-responsive">
-        <table class="table table-striped table-hover{% if options.class %} {{ options.class }}{% endif %}">
-            {{ block('table_head') }}
-            {{ block('table_body') }}
-        </table>
-    </div>
-{% if table.options.selector %}
-    <p style="text-align:center;">
-        <button type="submit" class="btn btn-primary table-selection-validate">
-            <span class="glyphicon glyphicon-ok"></span> {{ 'ekyna_table.validate'|trans }}
-        </button>
-    </p>
-</form>
-{% endif %}
-{% if table.pager.nbPages > 1 %}
-    <div class="table-pager">
-    {{ ekyna_table_pager(table) }}
-    </div>
-{% endif %}
+
+        {{ block('table_footer') }}
+
+    {# FORM END for selection or batch actions #}
+    {% if table.ui.select %}
+    </form>
+    {% endif %}
 </div>
 {% endspaceless %}
 {% endblock table %}
 
-{% block available_filters %}
-{% for filter in table.available_filters %}
-<a href="{{ ekyna_table_filter_add_path(filter) }}" class="btn btn-xs btn-primary">{{ filter.vars.label|trans }}<span class="glyphicon glyphicon-plus-sign"></span></a>
-{% endfor %}
-{% endblock available_filters %}
 
-{% block active_filters %}
-{% for filter in table.active_filters %}
-<a href="{{ ekyna_table_filter_remove_path(filter) }}" class="btn btn-xs btn-success">
-    <strong>{{ filter.vars.field|trans }}</strong>&nbsp;{{ filter.vars.operator }}&nbsp;&laquo;&nbsp;{{ block('active_filter_value') }}&nbsp;&raquo;<span class="glyphicon glyphicon-minus-sign"></span>
+{% block table_filters %}
+{% spaceless %}
+{% if table.available_filters|length > 0 %}
+<div class="table-filters">
+    <div class="row filters-available">
+        <div class="col-md-2">
+            <span class="filters-title">{{ 'ekyna_table.available_filters'|trans }}</span>
+        </div>
+        <div class="col-md-10">
+            <div class="filters-controls">{{ block('available_filters') }}</div>
+        </div>
+    </div>
+    {% if table.filter_form %}
+    <div class="row filters-form">
+        <div class="col-md-2">
+            <span class="filters-title">
+                {{ 'ekyna_table.new_filter'|trans }}
+                <strong>{{ table.filter_label|trans }}</strong>
+            </span>
+        </div>
+        <div class="col-md-10">
+            <div class="filters-controls">
+                {{ form_start(table.filter_form) }}
+                <div class="row">
+                    <div class="col-md-3">{{ form_row(table.filter_form.operator) }}</div>
+                    <div class="col-md-6">{{ form_row(table.filter_form.value) }}</div>
+                    <div class="col-md-3">
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-success">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                            <a href="javascript: void(0)" class="btn btn-danger table-filter-close">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {{ form_end(table.filter_form) }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if table.active_filters|length > 0 %}
+    <div class="row filters-active">
+        <div class="col-md-2">
+            <span class="filters-title">{{ 'ekyna_table.active_filters'|trans }}</span>
+        </div>
+        <div class="col-md-10">
+            <div class="filters-controls">{{ block('active_filters') }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+{% endspaceless %}
+{% endblock table_filters %}
+
+
+{%- block table_head_column_label -%}
+    {{ head.vars.label|trans }}
+{%- endblock table_head_column_label -%}
+
+
+{% block table_body %}
+{% spaceless %}
+<tbody>
+{% if table.rows|length > 0 %}
+    {% for row in table.rows %}
+        {{ block('table_row') }}
+    {% endfor %}
+{% else %}
+    <td colspan="{% if table.ui.select %}{{ table.heads|length + 1 }}{% else %}{{ table.heads|length }}{% endif %}">
+        <p class="text-center"><em>Aucun élément disponible</em></p>
+    </td>
+{% endif %}
+</tbody>
+{% endspaceless %}
+{% endblock table_body %}
+
+
+{% block table_footer %}
+{% spaceless %}
+<div class="row table-footer">
+    {# SELECTION #}
+    <div class="col-md-2 table-select">
+        {% if table.ui.select %}   {# TODO only for multiple mode #}
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="{{ table.ui.select.all }}"> All elements {# TODO trans #}
+            </label>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ACTIONS #}
+    <div class="col-md-4 table-batch">
+        {% if table.ui.batch %}
+        <div class="input-group input-group-sm">
+            <select name="{{ table.ui.batch.name }}" class="form-control">
+                <option value="" disabled selected>Execute a batch action</option> {# TODO trans #}
+                {% for choice in table.ui.batch.choices %}
+                    <option value="{{ choice.value }}">
+                        {{ choice.label|trans }}
+                    </option>
+                {% endfor %}
+            </select>
+            <span class = "input-group-btn">
+                <button type="submit" value="batch"
+                        name="{{ table.ui.batch.button }}"
+                        class="btn btn-primary btn-sm">
+                    Execute {# TODO trans #}
+                </button>
+            </span>
+        </div>
+        {% endif %}
+    </div>
+
+    {# EXPORT #}
+    <div class="col-md-4 table-export">
+        {% if table.ui.export %}
+        <div class="input-group input-group-sm">
+            <select name="{{ table.ui.export.name }}" class="form-control">
+                <option value="" disabled selected>Export to a format</option> {# TODO trans #}
+                {% for choice in table.ui.export.choices %}
+                    <option value="{{ choice.value }}">
+                        {{ choice.label }}
+                    </option>
+                {% endfor %}
+            </select>
+            <span class="input-group-btn">
+                <button type="submit" value="export"
+                        name="{{ table.ui.export.button }}"
+                        class="btn btn-primary btn-sm">
+                    Export {# TODO trans #}
+                </button>
+            </span>
+        </div>
+        {% endif %}
+    </div>
+
+    {# CONFIG #}
+    <div class="col-md-2 table-config text-right">
+        {# GRID #}
+        {% if table.ui.config %}
+        <div class="dropup config-grid">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button"
+                    id="{{ table.vars.name }}_config" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                <span class="glyphicon glyphicon-th"></span>&nbsp;
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="{{ table.vars.name }}_config">
+                <li>
+                    {% for choice in table.ui.config.column.choices %}
+                    <div class="checkbox">
+                        <label>
+                            <input name="{{ table.ui.config.column.name }}"
+                                   value="{{ choice.value }}" type="checkbox"
+                                    {% if choice.active %} checked="checked"{% endif %}> {{ choice.label|trans }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </li>
+                <li class="form-inline">
+                    <label for="{{ table.ui.config.max_per_page.name }}">
+                        Par page
+                    </label>
+                    <select id="{{ table.ui.config.max_per_page.name }}"
+                            name="{{ table.ui.config.max_per_page.name }}"
+                            class="form-control input-sm">
+                    {% for choice in table.ui.config.max_per_page.choices %}
+                        <option value="{{ choice.value }}"
+                                {% if choice.active %} selected="selected"{% endif %}>
+                            {{ choice.label }}
+                        </option>
+                    {% endfor %}
+                    </select>
+                </li>
+                <li class="text-center">
+                    <button type="submit" value="config"
+                            name="{{ table.ui.config.button }}"
+                            class="btn btn-xs btn-primary">
+                        Appliquer
+                    </button>
+                </li>
+            </ul>
+        </div>
+        {% endif %}
+
+        {# PROFILES #}
+        {% if table.ui.profile %}
+        <div class="dropup config-profiles">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button"
+                    id="{{ table.vars.name }}_profiles" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                <span class="glyphicon glyphicon-file"></span>&nbsp;
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="{{ table.vars.name }}_profiles">
+                <li>
+                    <div class="input-group input-group-sm">
+                        <select name="{{ table.ui.profile.select.name }}" class="form-control">
+                            <option value="" disabled selected>Select a profile</option> {# TODO trans #}
+                            {% for choice in table.ui.profile.select.choices %}
+                            <option value="{{ choice.value }}">
+                                {{ choice.label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <span class="input-group-btn">
+                            <button type="submit" value="load"
+                                    name="{{ table.ui.profile.select.load_button }}"
+                                    class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-play"></span>
+                            </button>
+                            <button type="submit" value="edit"
+                                    name="{{ table.ui.profile.select.edit_button }}"
+                                    class="btn btn-warning btn-sm">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                            <button type="submit" value="remove"
+                                    name="{{ table.ui.profile.select.remove_button }}"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce profil ?')">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </span>
+                    </div>
+                </li>
+                <li>
+                    <div class="input-group input-group-sm">
+                        <input name="{{ table.ui.profile.create.name }}"
+                               class="form-control" placeholder="Create a new profile"/> {# TODO trans #}
+                        <span class="input-group-btn">
+                            <button type="submit" value="create"
+                                    name="{{ table.ui.profile.create.button }}"
+                                    class="btn btn-success btn-sm">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{# PAGINATION #}
+{% if table.pager.nbPages > 1 %}
+<div class="table-pager text-center">
+    {{ ekyna_table_pager(table) }}
+</div>
+{% endif %}
+
+{% endspaceless %}
+{% endblock table_footer %}
+
+
+{% block available_filters %}
+{% spaceless %}
+{% for filter in table.available_filters %}
+<a href="{{ filter.vars.add_filter_href }}"
+   class="btn btn-xs btn-primary">
+    {{ filter.vars.label|trans }}
+    <span class="glyphicon glyphicon-plus-sign"></span>
 </a>
 {% endfor %}
+{% endspaceless %}
+{% endblock available_filters %}
+
+
+{% block active_filters %}
+{% spaceless %}
+{% for filter in table.active_filters %}
+<a href="{{ filter.vars.remove_filter_href }}"
+   class="btn btn-xs btn-success">
+    <strong>{{ filter.vars.label|trans }}</strong>&nbsp;
+    <em>{{ filter.vars.operator }}&nbsp;</em>
+    &laquo;&nbsp;{{ block('active_filter_value') }}&nbsp;&raquo;
+    <span class="glyphicon glyphicon-minus-sign"></span>
+</a>
+{% endfor %}
+{% endspaceless %}
 {% endblock active_filters %}
 
 {% block active_filter_value %}
-{% if filter.vars.value is iterable -%}
+{% spaceless %}
+    {% if filter.vars.value is iterable -%}
     {% for val in filter.vars.value -%}
         {{- val|trans }}{% if not loop.last %}, {% endif -%}
     {%- endfor %}
 {%- else -%}
     {{- filter.vars.value|trans }}
 {%- endif %}
+{% endspaceless %}
 {% endblock active_filter_value %}
 
-{% block table_head %}
-<thead>
-    <tr>
-        {% for column in table.columns %}
-        {% if column.vars.sortable %}
-        <th class="sort{% if column.vars.sorted %} sorted{% endif %}">
-            <a href="{{ ekyna_table_sort_path(column) }}" class="{{ column.vars.sort_dir }}">{{ column.vars.label|trans }}</a>
-        </th>
-        {% else %}
-        <th>{{ column.vars.label|trans }}</th>
-        {% endif %}
-        {% endfor %}
-    </tr>
-</thead>
-{% endblock table_head %}
-
-{% block table_body %}
-<tbody>
-{% if table.rows|length > 0 %}
-{% for row in table.rows %}
-{{ block('table_row') }}
-{% endfor %}
-{% else %}
-<tr><td colspan="{{ table.columns|length }}" style="text-align:center;font-style:italic;">{{ 'ekyna_table.no_results'|trans }}</td></tr>
-{% endif %}
-</tbody>
-{% endblock table_body %}
 
 {# CELLS #}
-{% block number_cell %}
-    <td class="text-right{% if sorted %} sorted{% endif %}">
-        {{- value|round(precision)|localizednumber }}{% if append is not same as (null) %} {{ append }}{% endif -%}
-    </td>
-{% endblock number_cell %}
 
-{% block choice_cell %}
-    <td{% if sorted %} class="sorted"{% endif %}>{{ label|trans|raw }}</td>
-{% endblock choice_cell %}
 
-{% block boolean_cell_value %}{{ label|trans }}{% endblock boolean_cell_value %}
+{%- block number_cell -%}
+    {{- value|round(precision)|localizednumber }}{% if append is not same as (null) %} {{ append }}{% endif -%}
+{%- endblock number_cell -%}
 
-{% block datetime_cell %}
-    <td{% if sorted %} class="sorted"{% endif %}>
-        {% if value is same as(null) %}
-            <em>{{ 'ekyna_core.value.undefined'|trans }}</em>
-        {% else %}
-            {{ value|localizeddate(date_format, time_format) }}
-        {% endif %}
-    </td>
-{% endblock datetime_cell %}
 
-{% block image_cell %}
-<td>
-    <img alt="thumbnail" src="{{ value|imagine_filter('admin_table') }}" />
-</td>
-{% endblock image_cell %}
+{%- block price_cell -%}
+    {{- value|localizedcurrency(currency) -}}
+{%- endblock price_cell -%}
 
-{% block action_button_label %}
-{% if button.icon|length > 0 %}<span class="glyphicon glyphicon-{{ button.icon }}"></span>{% else %}{{ button.label|trans }}{% endif %}
-{% endblock action_button_label %}
+
+{%- block choice_cell_value -%}
+    {{- choice.label|trans|raw -}}
+{%- endblock choice_cell_value -%}
+
+
+{%- block entity_cell %}
+    {%- for choice in value -%}
+        {%- if not loop.first -%}
+            {{- loop.revindex0 == 1 ? ' and ' : ', ' -}}
+        {%- endif -%}
+        {{- block('entity_cell_value') -}}
+    {%- endfor %}
+{% endblock entity_cell -%}
+
+{%- block entity_cell_value -%}
+    {% if route is defined and choice.parameters is defined %}
+        <a href="{{ path(route, choice.parameters) }}">{{ choice.label|raw }}</a>
+    {% else %}
+        {{- choice.label|raw -}}
+    {% endif %}
+{%- endblock entity_cell_value -%}
+
+
+{%- block boolean_cell_value %}{{ label|trans }}{% endblock boolean_cell_value -%}
+
+{%- block date_time_cell -%}
+    {%- if value is same as(null) -%}
+        <em>{{ 'ekyna_core.value.undefined'|trans }}</em>
+    {%- else -%}
+        {{- value|localizeddate(date_format, time_format) -}}
+    {%- endif -%}
+{%- endblock date_time_cell -%}
+
+
+{%- block anchor_cell -%}
+    {%- if value is same as(null) -%}
+        &nbsp;
+    {%- elseif route is defined -%}
+        <a href="{{ path(route, parameters) }}">{{ value|raw }}</a>
+    {%- else -%}
+        {{ value|raw }}
+    {%- endif -%}
+{%- endblock anchor_cell -%}
+
+
+{%- block actions_cell -%}
+    {%- for button in buttons -%}
+        {%- if button.disabled -%}
+            <a href="javascript:void(0)" class="btn btn-xs btn-{{ button.class }} disabled">
+                {{- block('action_button_label') -}}
+            </a>
+        {%- else -%}
+            <a href="{{ path(button.route, button.parameters) }}" class="btn btn-xs btn-{{ button.class }}">
+                {{- block('action_button_label') -}}
+            </a>
+        {%- endif -%}
+    {%- endfor -%}
+{%- endblock actions_cell -%}
+
+
+{%- block action_button_label -%}
+    {%- if button.icon|length > 0 -%}
+        <span class="glyphicon glyphicon-{{ button.icon }}"></span>
+    {%- else -%}
+        {{ button.label|trans }}
+    {%- endif -%}
+{%- endblock action_button_label -%}
+
+
+{%- block nested_actions_cell -%}
+    {{- block('actions_cell') -}}
+{%- endblock nested_actions_cell -%}
+
+
+{%- block nested_anchor_cell -%}
+    {%- for node in nodes -%}
+        {%- if node.type == 'button' -%}
+            <a href="javascript: void(0);" class="{{ node.class }}" data-children="{{ node.children }}"></a>
+        {%- else -%}
+            <i class="{{ node.class }}"></i>
+        {%- endif -%}
+    {%- endfor -%}
+    <a href="{{ path(route, parameters) }}">{{ value }}</a>
+{%- endblock nested_anchor_cell -%}

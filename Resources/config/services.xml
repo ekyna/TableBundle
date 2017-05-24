@@ -1,128 +1,90 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <container
-    xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services
+        xmlns="http://symfony.com/schema/dic/services"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/dic/services
                         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <parameters>
-        <parameter key="table.registry.class">Ekyna\Component\Table\TableRegistry</parameter>
-        <parameter key="table.factory.class">Ekyna\Component\Table\TableFactory</parameter>
-        <parameter key="table.extension.class">Ekyna\Component\Table\Extension\DependencyInjection\DependencyInjectionExtension</parameter>
-
-        <parameter key="table.twig.table_extension.class">Ekyna\Component\Table\Twig\TableExtension</parameter>
-    </parameters>
-
     <services>
-        <!-- TableRegistry -->
-        <service id="table.registry" class="%table.registry.class%">
-            <argument type="collection">
-                <argument type="service" id="table.extension"/>
-            </argument>
-        </service>
 
         <!-- TableFactory -->
-        <service id="table.factory" class="%table.factory.class%">
-            <argument type="service" id="table.registry" />
-            <argument type="service" id="form.factory" />
-            <argument type="service" id="doctrine.orm.entity_manager" />
+        <service id="table.factory" class="Ekyna\Component\Table\Factory">
+            <argument type="service" id="table.registry"/>
+            <argument type="service" id="form.factory"/>
         </service>
 
-        <!-- TwigExtension -->
-        <service id="table.twig.ui_extension" class="%table.twig.table_extension.class%">
-            <argument type="service" id="twig" />
-            <argument type="service" id="white_october_pagerfanta.view_factory" />
-            <argument>%table.twig.table_extension.template%</argument>
-            <tag name="twig.extension" />
+        <!-- Http foundation table type extension -->
+        <service id="table.http_foundation.table_type_extension"
+                 class="Ekyna\Component\Table\Bridge\Symfony\HttpFoundation\TableTypeExtension">
+            <tag name="table.type_extension" extended_type="Ekyna\Component\Table\Extension\Core\Type\TableType"/>
+        </service>
+
+        <!-- Session table type extension -->
+        <service id="table.session.table_type_extension"
+                 class="Ekyna\Component\Table\Bridge\Symfony\Session\TableTypeExtension">
+            <argument type="service" id="session"/>
+            <tag name="table.type_extension" extended_type="Ekyna\Component\Table\Extension\Core\Type\TableType"/>
+        </service>
+
+        <!-- Export table type extension -->
+        <service id="table.export.table_type_extension"
+                 class="Ekyna\Component\Table\Bridge\Symfony\Export\TableTypeExtension">
+            <argument type="service" id="serializer"/>
+            <tag name="table.type_extension" extended_type="Ekyna\Component\Table\Extension\Core\Type\TableType"/>
+        </service>
+
+        <!-- TODO Session storage table type extension -->
+
+        <!-- Doctrine ORM extension -->
+        <!-- TODO if doctrine ORM bundle is active (create a compiler pass) -->
+        <service id="table.doctrine.orm.extension"
+                 class="Ekyna\Component\Table\Bridge\Doctrine\ORM\DoctrineORMExtension">
+            <argument type="service" id="doctrine"/>
         </service>
 
         <!-- DependencyInjectionExtension -->
-        <service id="table.extension" class="%table.extension.class%" public="false">
-            <argument type="service" id="service_container" />
+        <service id="table.extension"
+                 class="Ekyna\Component\Table\Bridge\Symfony\DependencyInjection\DependencyInjectionExtension"
+                 public="false">
+            <argument type="service" id="service_container"/>
             <!-- All services with tag "table.type" are inserted here by TablePass -->
-            <argument type="collection" />
+            <argument type="collection"/>
+            <!-- All services with tag "table.type_extension" are inserted here by TablePass -->
+            <argument type="collection"/>
             <!-- All services with tag "table.column_type" are inserted here by TablePass -->
-            <argument type="collection" />
+            <argument type="collection"/>
+            <!-- All services with tag "table.column_type_extension" are inserted here by TablePass -->
+            <argument type="collection"/>
             <!-- All services with tag "table.filter_type" are inserted here by TablePass -->
-            <argument type="collection" />
+            <argument type="collection"/>
+            <!-- All services with tag "table.filter_type_extension" are inserted here by TablePass -->
+            <argument type="collection"/>
+            <!-- All services with tag "table.action_type" are inserted here by TablePass -->
+            <argument type="collection"/>
+            <!-- All services with tag "table.action_type_extension" are inserted here by TablePass -->
+            <argument type="collection"/>
+            <!-- All services with tag "table.adapter" are inserted here by TablePass -->
+            <argument type="collection"/>
         </service>
 
-        <!-- CoreExtension -->
-        <service id="table.type.table" class="Ekyna\Component\Table\Extension\Core\Type\TableType">
-            <!-- <argument type="service" id="property_accessor"/> -->
-            <tag name="table.type" alias="table" />
+        <!-- ResolvedTypeFactory -->
+        <service id="table.resolved_type_factory" class="Ekyna\Component\Table\ResolvedTypeFactory"/>
+
+        <!-- TableRegistry -->
+        <service id="table.registry" class="Ekyna\Component\Table\Registry">
+            <argument type="collection">
+                <argument type="service" id="table.doctrine.orm.extension"/>
+                <argument type="service" id="table.extension"/>
+            </argument>
+            <argument type="service" id="table.resolved_type_factory"/>
         </service>
 
-        <!-- Column types -->
-        <service id="table.column_type.id" class="Ekyna\Component\Table\Extension\Core\Type\Column\IdType">
-            <tag name="table.column_type" alias="id" />
-        </service>
-        <service id="table.column_type.selector" class="Ekyna\Component\Table\Extension\Core\Type\Column\SelectorType">
-            <tag name="table.column_type" alias="selector" />
-        </service>
-        <service id="table.column_type.actions" class="Ekyna\Component\Table\Extension\Core\Type\Column\ActionsType">
-            <tag name="table.column_type" alias="actions" />
-        </service>
-        <service id="table.column_type.anchor" class="Ekyna\Component\Table\Extension\Core\Type\Column\AnchorType">
-            <tag name="table.column_type" alias="anchor" />
-        </service>
-        <service id="table.column_type.datetime" class="Ekyna\Component\Table\Extension\Core\Type\Column\DatetimeType">
-            <tag name="table.column_type" alias="datetime" />
-        </service>
-        <service id="table.column_type.number" class="Ekyna\Component\Table\Extension\Core\Type\Column\NumberType">
-            <tag name="table.column_type" alias="number" />
-        </service>
-        <service id="table.column_type.price" class="Ekyna\Component\Table\Extension\Core\Type\Column\PriceType">
-            <tag name="table.column_type" alias="price" />
-        </service>
-        <service id="table.column_type.text" class="Ekyna\Component\Table\Extension\Core\Type\Column\TextType">
-            <tag name="table.column_type" alias="text" />
-        </service>
-        <service id="table.column_type.boolean" class="Ekyna\Component\Table\Extension\Core\Type\Column\BooleanType">
-            <tag name="table.column_type" alias="boolean" />
-        </service>
-        <service id="table.column_type.choice" class="Ekyna\Component\Table\Extension\Core\Type\Column\ChoiceType">
-            <tag name="table.column_type" alias="choice" />
-        </service>
-        <service id="table.column_type.country" class="Ekyna\Component\Table\Extension\Core\Type\Column\CountryType">
-            <tag name="table.column_type" alias="country" />
-        </service>
-        <service id="table.column_type.image" class="Ekyna\Component\Table\Extension\Core\Type\Column\ImageType">
-            <tag name="table.column_type" alias="image" />
-        </service>
-        <service id="table.column_type.nested_anchor" class="Ekyna\Component\Table\Extension\Core\Type\Column\NestedAnchorType">
-            <tag name="table.column_type" alias="nested_anchor" />
-        </service>
-        <service id="table.column_type.nested_actions" class="Ekyna\Component\Table\Extension\Core\Type\Column\NestedActionsType">
-            <tag name="table.column_type" alias="nested_actions" />
-        </service>
-
-        <!-- Filter types -->
-        <service id="table.filter_type.entity" class="Ekyna\Component\Table\Extension\Core\Type\Filter\EntityType">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <tag name="table.filter_type" alias="entity" />
-        </service>
-        <service id="table.filter_type.entities" class="Ekyna\Component\Table\Extension\Core\Type\Filter\EntitiesType">
-            <argument type="service" id="doctrine.orm.default_entity_manager" />
-            <tag name="table.filter_type" alias="entities" />
-        </service>
-        <service id="table.filter_type.choice" class="Ekyna\Component\Table\Extension\Core\Type\Filter\ChoiceType">
-            <tag name="table.filter_type" alias="choice" />
-        </service>
-        <service id="table.filter_type.country" class="Ekyna\Component\Table\Extension\Core\Type\Filter\CountryType">
-            <tag name="table.filter_type" alias="country" />
-        </service>
-        <service id="table.filter_type.boolean" class="Ekyna\Component\Table\Extension\Core\Type\Filter\BooleanType">
-            <tag name="table.filter_type" alias="boolean" />
-        </service>
-        <service id="table.filter_type.datetime" class="Ekyna\Component\Table\Extension\Core\Type\Filter\DatetimeType">
-            <tag name="table.filter_type" alias="datetime" />
-        </service>
-        <service id="table.filter_type.number" class="Ekyna\Component\Table\Extension\Core\Type\Filter\NumberType">
-            <tag name="table.filter_type" alias="number" />
-        </service>
-        <service id="table.filter_type.text" class="Ekyna\Component\Table\Extension\Core\Type\Filter\TextType">
-            <tag name="table.filter_type" alias="text" />
+        <!-- TwigExtension -->
+        <service id="table.twig.ui_extension" class="Ekyna\Component\Table\Bridge\Twig\TableExtension">
+            <argument type="service" id="twig"/>
+            <argument type="service" id="white_october_pagerfanta.view_factory"/>
+            <argument>%table.twig.table_extension.template%</argument>
+            <tag name="twig.extension"/>
         </service>
     </services>
 

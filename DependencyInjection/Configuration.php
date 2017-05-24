@@ -23,9 +23,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('template')->defaultValue('EkynaTableBundle::table.html.twig')->end()
-                // TODO attribute_bag_name
-            ->end()
-        ;
+            ->end();
 
         return $treeBuilder;
     }

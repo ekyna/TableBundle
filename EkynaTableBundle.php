@@ -3,7 +3,7 @@
 namespace Ekyna\Bundle\TableBundle;
 
 use Ekyna\Bundle\TableBundle\DependencyInjection\Compiler\TablePass;
-use Ekyna\Component\Table\DependencyInjection\Compiler\TwigPathCompilerPass;
+use Ekyna\Component\Table\Bridge\Symfony\DependencyInjection\TwigPathCompilerPass;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
