@@ -1,29 +1,28 @@
 {
-    "name" : "ekyna/table-bundle",
-    "description" : "Table component integration",
-    "type" : "symfony-bundle",
-    "authors" : [{
-            "name" : "Etienne Dauvergne",
-            "homepage" : "http://ekyna.com"
+    "name": "ekyna/table-bundle",
+    "description": "Table component integration",
+    "type": "symfony-bundle",
+    "authors": [
+        {
+            "name": "Etienne Dauvergne",
+            "homepage": "http://ekyna.com"
         }
     ],
-    "keywords" : [
-        "symfony2",
+    "keywords": [
+        "symfony",
         "table",
         "bundle"
     ],
-    "homepage" : "https://github.com/ekyna/TableBundle",
-    "license" : [
-        "MIT"
-    ],
-    "require" : {
-        "php" : ">=7.0",
+    "homepage": "https://github.com/ekyna/TableBundle",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.0",
         "symfony/framework-bundle": "^3.0",
-        "ekyna/table": "0.6.x-dev"
+        "ekyna/table": "0.7.x-dev"
     },
-    "autoload" : {
-        "psr-4" : {
-            "Ekyna\\Bundle\\TableBundle\\" : ""
+    "autoload": {
+        "psr-4": {
+            "Ekyna\\Bundle\\TableBundle\\": ""
         }
     }
 }
