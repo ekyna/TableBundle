@@ -44,7 +44,8 @@ class ActionsType extends AbstractColumnType
      */
     public function buildCellView(CellView $view, ColumnInterface $column, RowInterface $row, array $options)
     {
-        $buttons = [];
+        $buttons = isset($view->vars['buttons']) ? $view->vars['buttons'] : [];
+
         $builder = $options['button_builder'];
 
         foreach ($options['buttons'] as $buttonOptions) {
