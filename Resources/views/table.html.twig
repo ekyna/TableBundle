@@ -15,7 +15,11 @@
 
         {# COLUMNS, ROWS AND CELLS #}
         <div class="table-responsive">
-            <table class="table table-striped table-hover{% if options.class %} {{ options.class }}{% endif %}">
+            {% set attr = table.vars.attr|default({}) %}
+            {% set classes = attr.class|default('table table-striped table-hover') %}
+            {% if options.class %}{% set classes = (classes ~ ' ' ~ options.class)|trim %}{% endif %}
+            {% set attr = attr|merge({'class': classes}) %}
+            <table{{ block('attributes') }}>
                 {{ block('table_head') }}
                 {{ block('table_body') }}
             </table>
