@@ -1,0 +1,22 @@
+available_filters: Filtres disponibles
+active_filters: Filtres actifs
+new_filter: Filtrer par
+no_result: Aucun élément disponible
+all_elements: Tous les éléments
+select_action: Traitement par lot
+execute: Exécuter
+select_format: Exporter vers le format
+export: Exporter
+per_page: Par page
+apply: Appliquer
+profile:
+    select: Sélectionner un profil
+    name: Nouveau profil
+    new: Créer
+    load: Charger
+    edit: Modifier
+    remove: Supprimer
+    confirm: Êtes-vous sûr de vouloir supprimer ce profil ?
+error:
+    profile_required: Veuillez sélectionner un profil.
+    name_required: Veuillez saisir un nom de profil.

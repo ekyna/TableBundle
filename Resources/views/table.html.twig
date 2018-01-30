@@ -5,12 +5,15 @@
 {% spaceless %}
 <div class="ekyna-table">
 
+    {# ERRORS #}
+    {{ block('table_errors') }}
+
     {# FILTERS #}
     {{ block('table_filters') }}
 
     {# FORM START for selection, batch or export #}
     {% if table.ui.select %}
-    <form name="{{ table.vars.name }}" method="GET">
+    <form name="{{ table.vars.name }}" method="GET">{# TODO method option/parameter #}
     {% endif %}
 
         {# COLUMNS, ROWS AND CELLS #}
@@ -36,13 +39,26 @@
 {% endblock table %}
 
 
+{% block table_errors %}
+{% spaceless %}
+    {% if table.vars.errors is not empty -%}
+        {% for error in table.vars.errors -%}
+            <div class="alert alert-danger">
+                {{ error.message|trans(error.parameters, error.translationDomain) }}
+            </div>
+        {%- endfor %}
+    {%- endif %}
+{% endspaceless %}
+{% endblock table_errors %}
+
+
 {% block table_filters %}
 {% spaceless %}
 {% if table.available_filters|length > 0 %}
 <div class="table-filters">
     <div class="row filters-available">
         <div class="col-md-2">
-            <span class="filters-title">{{ 'ekyna_table.available_filters'|trans }}</span>
+            <span class="filters-title">{{ 'available_filters'|trans({}, 'EkynaTable') }}</span>
         </div>
         <div class="col-md-10">
             <div class="filters-controls">{{ block('available_filters') }}</div>
@@ -52,7 +68,7 @@
     <div class="row filters-form">
         <div class="col-md-2">
             <span class="filters-title">
-                {{ 'ekyna_table.new_filter'|trans }}
+                {{ 'new_filter'|trans({}, 'EkynaTable') }}
                 <strong>{{ table.filter_label|trans }}</strong>
             </span>
         </div>
@@ -81,7 +97,7 @@
     {% if table.active_filters|length > 0 %}
     <div class="row filters-active">
         <div class="col-md-2">
-            <span class="filters-title">{{ 'ekyna_table.active_filters'|trans }}</span>
+            <span class="filters-title">{{ 'active_filters'|trans({}, 'EkynaTable') }}</span>
         </div>
         <div class="col-md-10">
             <div class="filters-controls">{{ block('active_filters') }}</div>
@@ -108,7 +124,7 @@
     {% endfor %}
 {% else %}
     <td colspan="{% if table.ui.select %}{{ table.heads|length + 1 }}{% else %}{{ table.heads|length }}{% endif %}">
-        <p class="text-center"><em>Aucun élément disponible</em></p>
+        <p class="text-center"><em>{{ 'no_result'|trans({}, 'EkynaTable') }}</em></p>
     </td>
 {% endif %}
 </tbody>
@@ -124,7 +140,8 @@
         {% if table.ui.select %}   {# TODO only for multiple mode #}
         <div class="checkbox">
             <label>
-                <input type="checkbox" name="{{ table.ui.select.all }}"> All elements {# TODO trans #}
+                <input type="checkbox" name="{{ table.ui.select.all }}">
+                {{ 'all_elements'|trans({}, 'EkynaTable') }}
             </label>
         </div>
         {% endif %}
@@ -135,7 +152,7 @@
         {% if table.ui.batch %}
         <div class="input-group input-group-sm">
             <select name="{{ table.ui.batch.name }}" class="form-control">
-                <option value="" disabled selected>Execute a batch action</option> {# TODO trans #}
+                <option value="" disabled selected>{{ 'select_action'|trans({}, 'EkynaTable') }}</option>
                 {% for choice in table.ui.batch.choices %}
                     <option value="{{ choice.value }}">
                         {{ choice.label|trans }}
@@ -146,7 +163,7 @@
                 <button type="submit" value="batch"
                         name="{{ table.ui.batch.button }}"
                         class="btn btn-primary btn-sm">
-                    Execute {# TODO trans #}
+                    {{ 'execute'|trans({}, 'EkynaTable') }}
                 </button>
             </span>
         </div>
@@ -158,7 +175,7 @@
         {% if table.ui.export %}
         <div class="input-group input-group-sm">
             <select name="{{ table.ui.export.name }}" class="form-control">
-                <option value="" disabled selected>Export to a format</option> {# TODO trans #}
+                <option value="" disabled selected>{{ 'select_format'|trans({}, 'EkynaTable') }}</option>
                 {% for choice in table.ui.export.choices %}
                     <option value="{{ choice.value }}">
                         {{ choice.label }}
@@ -169,7 +186,7 @@
                 <button type="submit" value="export"
                         name="{{ table.ui.export.button }}"
                         class="btn btn-primary btn-sm">
-                    Export {# TODO trans #}
+                    {{ 'export'|trans({}, 'EkynaTable') }}
                 </button>
             </span>
         </div>
@@ -194,14 +211,15 @@
                         <label>
                             <input name="{{ table.ui.config.column.name }}"
                                    value="{{ choice.value }}" type="checkbox"
-                                    {% if choice.active %} checked="checked"{% endif %}> {{ choice.label|trans }}
+                                    {% if choice.active %} checked="checked"{% endif %}>
+                            {{ choice.label|trans }}
                         </label>
                     </div>
                     {% endfor %}
                 </li>
                 <li class="form-inline">
                     <label for="{{ table.ui.config.max_per_page.name }}">
-                        Par page
+                        {{ 'per_page'|trans({}, 'EkynaTable') }}
                     </label>
                     <select id="{{ table.ui.config.max_per_page.name }}"
                             name="{{ table.ui.config.max_per_page.name }}"
@@ -218,7 +236,7 @@
                     <button type="submit" value="config"
                             name="{{ table.ui.config.button }}"
                             class="btn btn-xs btn-primary">
-                        Appliquer
+                        {{ 'apply'|trans({}, 'EkynaTable') }}
                     </button>
                 </li>
             </ul>
@@ -238,7 +256,7 @@
                 <li>
                     <div class="input-group input-group-sm">
                         <select name="{{ table.ui.profile.select.name }}" class="form-control">
-                            <option value="" disabled selected>Select a profile</option> {# TODO trans #}
+                            <option value="" disabled selected>{{ 'profile.select'|trans({}, 'EkynaTable') }}</option>
                             {% for choice in table.ui.profile.select.choices %}
                             <option value="{{ choice.value }}">
                                 {{ choice.label }}
@@ -248,18 +266,21 @@
                         <span class="input-group-btn">
                             <button type="submit" value="load"
                                     name="{{ table.ui.profile.select.load_button }}"
-                                    class="btn btn-primary btn-sm">
+                                    class="btn btn-primary btn-sm"
+                                    title="{{ 'profile.load'|trans({}, 'EkynaTable') }}">
                                 <span class="glyphicon glyphicon-play"></span>
                             </button>
                             <button type="submit" value="edit"
                                     name="{{ table.ui.profile.select.edit_button }}"
-                                    class="btn btn-warning btn-sm">
+                                    class="btn btn-warning btn-sm"
+                                    title="{{ 'profile.edit'|trans({}, 'EkynaTable') }}">
                                 <span class="glyphicon glyphicon-pencil"></span>
                             </button>
                             <button type="submit" value="remove"
                                     name="{{ table.ui.profile.select.remove_button }}"
                                     class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce profil ?')">
+                                    title="{{ 'profile.remove'|trans({}, 'EkynaTable') }}"
+                                    onclick="return confirm('{{ 'profile.confirm'|trans({}, 'EkynaTable') }}')">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </button>
                         </span>
@@ -268,11 +289,12 @@
                 <li>
                     <div class="input-group input-group-sm">
                         <input name="{{ table.ui.profile.create.name }}"
-                               class="form-control" placeholder="Create a new profile"/> {# TODO trans #}
+                               class="form-control" placeholder="{{ 'profile.name'|trans({}, 'EkynaTable') }}"/>
                         <span class="input-group-btn">
                             <button type="submit" value="create"
                                     name="{{ table.ui.profile.create.button }}"
-                                    class="btn btn-success btn-sm">
+                                    class="btn btn-success btn-sm"
+                                    title="{{ 'profile.new'|trans({}, 'EkynaTable') }}">
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
                         </span>
