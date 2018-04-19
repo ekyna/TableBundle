@@ -16,6 +16,8 @@
         <!-- Http foundation table type extension -->
         <service id="table.http_foundation.table_type_extension"
                  class="Ekyna\Component\Table\Bridge\Symfony\HttpFoundation\TableTypeExtension">
+            <argument type="service" id="session.flash_bag"/>
+            <argument type="service" id="translator"/>
             <tag name="table.type_extension" extended_type="Ekyna\Component\Table\Extension\Core\Type\TableType"/>
         </service>
 

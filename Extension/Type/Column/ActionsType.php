@@ -119,19 +119,27 @@ class ActionsType extends AbstractColumnType
             ])
             ->setDefaults([
                 'route_parameters'      => [],
-                'icon'                  => null,
                 'class'                 => 'default',
+                'icon'                  => null,
+                'confirm'               => null,
+                'target'                => null,
                 'disabled'              => false,
                 'disable_property_path' => null,
+                'disable'               => null,
+                'filter'                => null,
             ])
             ->setAllowedTypes('label', 'string')
             ->setAllowedTypes('route_name', 'string')
             ->setAllowedTypes('route_parameters', 'array')
             ->setAllowedTypes('route_parameters_map', 'array')
-            ->setAllowedTypes('icon', ['null', 'string'])
             ->setAllowedTypes('class', ['null', 'string'])
+            ->setAllowedTypes('icon', ['null', 'string'])
+            ->setAllowedTypes('confirm', ['null', 'string'])
+            ->setAllowedTypes('target', ['null', 'string'])
             ->setAllowedTypes('disabled', 'bool')
-            ->setAllowedTypes('disable_property_path', ['null', 'string']);
+            ->setAllowedTypes('disable_property_path', ['null', 'string'])
+            ->setAllowedTypes('disable', ['null', 'callable'])
+            ->setAllowedTypes('filter', ['null', 'callable']);
 
         return $this->buttonOptionsResolver = $resolver;
     }
@@ -148,6 +156,10 @@ class ActionsType extends AbstractColumnType
         }
 
         return $this->buttonBuilder = function (RowInterface $row, array $buttonOptions) {
+            if ((null !== $filter = $buttonOptions['filter']) && is_callable($filter) && !$filter($row)) {
+                return null;
+            }
+
             $parameters = $buttonOptions['route_parameters'];
             foreach ($buttonOptions['route_parameters_map'] as $parameter => $propertyPath) {
                 $parameters[$parameter] = $row->getData($propertyPath);
@@ -156,12 +168,16 @@ class ActionsType extends AbstractColumnType
             $disabled = $buttonOptions['disabled'];
             if (!empty($disabledPath = $buttonOptions['disable_property_path'])) {
                 $disabled = $row->getData($disabledPath);
+            } elseif ((null !== $disable = $buttonOptions['disable']) && is_callable($disable)) {
+                $disabled = $disable($row);
             }
 
             return [
                 'label'      => $buttonOptions['label'],
-                'icon'       => $buttonOptions['icon'],
                 'class'      => $buttonOptions['class'],
+                'icon'       => $buttonOptions['icon'],
+                'confirm'    => $buttonOptions['confirm'],
+                'target'     => $buttonOptions['target'],
                 'route'      => $buttonOptions['route_name'],
                 'parameters' => $parameters,
                 'disabled'   => $disabled,

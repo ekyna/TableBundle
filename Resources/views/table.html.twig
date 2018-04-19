@@ -155,7 +155,7 @@
                 <option value="" disabled selected>{{ 'select_action'|trans({}, 'EkynaTable') }}</option>
                 {% for choice in table.ui.batch.choices %}
                     <option value="{{ choice.value }}">
-                        {{ choice.label|trans }}
+                        {{ choice.label|trans|raw }}
                     </option>
                 {% endfor %}
             </select>
@@ -422,7 +422,11 @@
                 {{- block('action_button_label') -}}
             </a>
         {%- else -%}
-            <a href="{{ path(button.route, button.parameters) }}" class="btn btn-xs btn-{{ button.class }}">
+            <a href="{{ path(button.route, button.parameters) }}"
+               class="btn btn-xs btn-{{ button.class }}"
+               title="{{ button.label|trans }}"
+               {%- if button.confirm is not empty %} onclick="return confirm('{{ button.confirm|trans|e('js') }}')"{% endif -%}
+               {%- if button.target is not empty %} target="{{ button.target }}"{% endif %}>
                 {{- block('action_button_label') -}}
             </a>
         {%- endif -%}
