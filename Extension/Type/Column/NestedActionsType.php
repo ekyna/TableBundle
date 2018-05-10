@@ -40,6 +40,8 @@ class NestedActionsType extends AbstractColumnType
             'disabled' => $disabled,
             'label'    => 'Ajouter', // TODO translation
             'class'    => 'primary',
+            'confirm'  => null,
+            'target'   => null,
         ];
 
         $newChildButton['icon'] = 'plus';
