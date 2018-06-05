@@ -5,9 +5,11 @@ namespace Ekyna\Bundle\TableBundle\Extension\Type\Column;
 use Ekyna\Component\Table\Column\AbstractColumnType;
 use Ekyna\Component\Table\Column\ColumnBuilderInterface;
 use Ekyna\Component\Table\Column\ColumnInterface;
+use Ekyna\Component\Table\Exception\InvalidArgumentException;
 use Ekyna\Component\Table\Extension\Core\Type\Column\ColumnType;
 use Ekyna\Component\Table\Source\RowInterface;
 use Ekyna\Component\Table\View\CellView;
+use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException as InvalidOptions;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -49,7 +51,21 @@ class ActionsType extends AbstractColumnType
         $builder = $options['button_builder'];
 
         foreach ($options['buttons'] as $buttonOptions) {
-            if (null !== $button = $builder($row, $buttonOptions)) {
+            if (is_callable($buttonOptions)) {
+                if (null !== $button = $buttonOptions($row)) {
+                    $buttons[] = array_replace([
+                        'label'      => null,
+                        'class'      => 'default',
+                        'icon'       => null,
+                        'confirm'    => null,
+                        'target'     => null,
+                        'path'       => null,
+                        'route'      => null,
+                        'parameters' => [],
+                        'disabled'   => false,
+                    ], $button);
+                }
+            } elseif (null !== $button = $builder($row, $buttonOptions)) {
                 $buttons[] = $button;
             }
         }
@@ -84,7 +100,13 @@ class ActionsType extends AbstractColumnType
 
                 $buttons = [];
                 foreach ($value as $buttonOptions) {
-                    $buttons[] = $resolver->resolve($buttonOptions);
+                    if (is_callable($buttonOptions) && $this->checkButtonBuilder($buttonOptions)) {
+                        $buttons[] = $buttonOptions;
+                    } elseif (is_array($buttonOptions)) {
+                        $buttons[] = $resolver->resolve($buttonOptions);
+                    } else {
+                        throw new InvalidArgumentException("Button options must be an array of options or a closure.");
+                    }
                 }
 
                 return $buttons;
@@ -97,6 +119,33 @@ class ActionsType extends AbstractColumnType
     public function getParent()
     {
         return ColumnType::class;
+    }
+
+    /**
+     * Checks the customer button builder callable signature.
+     *
+     * @param callable $callable
+     *
+     * @return bool
+     */
+    private function checkButtonBuilder($callable)
+    {
+        $reflection = new \ReflectionFunction($callable);
+        $parameters = $reflection->getParameters();
+
+        if (1 !== count($parameters)) {
+            return false;
+        }
+
+        if (null === $class = $parameters[0]->getClass()) {
+            return false;
+        }
+
+        if ($class->name !== RowInterface::class) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -114,11 +163,12 @@ class ActionsType extends AbstractColumnType
         $resolver
             ->setRequired([
                 'label',
-                'route_name',
-                'route_parameters_map',
             ])
             ->setDefaults([
+                'path'                  => null,
+                'route_name'            => null,
                 'route_parameters'      => [],
+                'route_parameters_map'  => [],
                 'class'                 => 'default',
                 'icon'                  => null,
                 'confirm'               => null,
@@ -129,7 +179,8 @@ class ActionsType extends AbstractColumnType
                 'filter'                => null,
             ])
             ->setAllowedTypes('label', 'string')
-            ->setAllowedTypes('route_name', 'string')
+            ->setAllowedTypes('path', ['null', 'string'])
+            ->setAllowedTypes('route_name', ['null', 'string'])
             ->setAllowedTypes('route_parameters', 'array')
             ->setAllowedTypes('route_parameters_map', 'array')
             ->setAllowedTypes('class', ['null', 'string'])
@@ -139,7 +190,14 @@ class ActionsType extends AbstractColumnType
             ->setAllowedTypes('disabled', 'bool')
             ->setAllowedTypes('disable_property_path', ['null', 'string'])
             ->setAllowedTypes('disable', ['null', 'callable'])
-            ->setAllowedTypes('filter', ['null', 'callable']);
+            ->setAllowedTypes('filter', ['null', 'callable'])
+            ->setNormalizer('route_name', function (Options $options, $value) {
+                if (empty($value) && empty($options['path'])) {
+                    throw new InvalidOptions("The button option 'path' must be defined if 'route_name' is not.");
+                }
+
+                return $value;
+            });
 
         return $this->buttonOptionsResolver = $resolver;
     }
@@ -178,6 +236,7 @@ class ActionsType extends AbstractColumnType
                 'icon'       => $buttonOptions['icon'],
                 'confirm'    => $buttonOptions['confirm'],
                 'target'     => $buttonOptions['target'],
+                'path'       => $buttonOptions['path'],
                 'route'      => $buttonOptions['route_name'],
                 'parameters' => $parameters,
                 'disabled'   => $disabled,

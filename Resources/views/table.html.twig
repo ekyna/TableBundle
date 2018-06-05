@@ -422,7 +422,7 @@
                 {{- block('action_button_label') -}}
             </a>
         {%- else -%}
-            <a href="{{ path(button.route, button.parameters) }}"
+            <a href="{{ button.route ? path(button.route, button.parameters) : button.path }}"
                class="btn btn-xs btn-{{ button.class }}"
                title="{{ button.label|trans }}"
                {%- if button.confirm is not empty %} onclick="return confirm('{{ button.confirm|trans|e('js') }}')"{% endif -%}
