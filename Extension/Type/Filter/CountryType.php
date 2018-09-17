@@ -2,8 +2,8 @@
 
 namespace Ekyna\Bundle\TableBundle\Extension\Type\Filter;
 
-use Ekyna\Component\Table\Column\AbstractColumnType;
 use Ekyna\Component\Table\Extension\Core\Type\Filter\ChoiceType;
+use Ekyna\Component\Table\Filter\AbstractFilterType;
 use Symfony\Component\Intl\Intl;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * @package Ekyna\Component\Table\Extension\Core\Type\Filter
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class CountryType extends AbstractColumnType
+class CountryType extends AbstractFilterType
 {
     /**
      * @inheritdoc
