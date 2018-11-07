@@ -75,6 +75,8 @@
         <div class="col-md-10">
             <div class="filters-controls">
                 {{ form_start(table.filter_form) }}
+                <input type="hidden" value="{{ table.filter_form.vars.filter_param_value }}"
+                       name="{{ table.vars.name }}[{{ table.filter_form.vars.filter_param_name }}]">
                 <div class="row">
                     <div class="col-md-3">{{ form_row(table.filter_form.operator) }}</div>
                     <div class="col-md-6">{{ form_row(table.filter_form.value) }}</div>
