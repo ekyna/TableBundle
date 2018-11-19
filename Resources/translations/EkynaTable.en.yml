@@ -1,0 +1,22 @@
+available_filters: Available filters
+active_filters: Active filters
+new_filter: Filter by
+no_result: No result
+all_elements: All the lines
+select_action: Batch actions
+execute: Execute
+select_format: Export to format
+export: Export
+per_page: Per page
+apply: Apply
+profile:
+    select: Select a profil
+    name: New profil
+    new: Create
+    load: Load
+    edit: Edit
+    remove: Remove
+    confirm: Are you sure you want to remove this profil ?
+error:
+    profile_required: Please select a profil.
+    name_required: Please enter a name for this profil.
