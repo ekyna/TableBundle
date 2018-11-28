@@ -22,7 +22,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('template')->defaultValue('EkynaTableBundle::table.html.twig')->end()
+                ->scalarNode('template')->defaultValue('@EkynaTable/table.html.twig')->end()
             ->end();
 
         return $treeBuilder;

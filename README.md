@@ -100,7 +100,7 @@ class ResourceController extends Controller
             return $response;
         }
         
-        return $this->render('AcmeDemoBundle:Brand:index.html.twig', array(
+        return $this->render('@AcmeDemo/Brand/index.html.twig', array(
             'brands' => $table->createView(),
         ));
     }
@@ -139,7 +139,7 @@ It requires jQuery and Bootstrap 3.
 You can create your own rendering template (where you will define all blocks of the default template) and use it this way
 
 ```twig
-    {{ ekyna_table_render(brands, {'template': 'AcmeDemoBundle:Table:render.html.twig'}) }}
+    {{ ekyna_table_render(brands, {'template': '@AcmeDemo/Table/render.html.twig'}) }}
 ```
 
 ## What's next ?
