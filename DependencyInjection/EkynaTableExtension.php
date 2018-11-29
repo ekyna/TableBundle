@@ -26,8 +26,9 @@ class EkynaTableExtension extends Extension implements PrependExtensionInterface
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
-        // TODO replace argument on service
-        $container->setParameter('table.twig.table_extension.template', $config['template']);
+        $container
+            ->getDefinition('table.twig.renderer')
+            ->setArgument(2, $config['template']);
     }
 
     /**

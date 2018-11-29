@@ -81,11 +81,17 @@
             <argument type="service" id="table.resolved_type_factory"/>
         </service>
 
-        <!-- TwigExtension -->
-        <service id="table.twig.ui_extension" class="Ekyna\Component\Table\Bridge\Twig\TableExtension">
+        <!-- Twig renderer -->
+        <service id="table.twig.renderer"
+                 class="Ekyna\Component\Table\Bridge\Twig\TwigRenderer"
+                 public="false">
             <argument type="service" id="twig"/>
             <argument type="service" id="white_october_pagerfanta.view_factory"/>
-            <argument>%table.twig.table_extension.template%</argument>
+        </service>
+
+        <!-- Twig extension -->
+        <service id="table.twig.extension" class="Ekyna\Component\Table\Bridge\Twig\TableExtension">
+            <argument type="service" id="table.twig.renderer"/>
             <tag name="twig.extension"/>
         </service>
     </services>
