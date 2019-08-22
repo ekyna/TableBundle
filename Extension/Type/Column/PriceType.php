@@ -36,9 +36,10 @@ class PriceType extends AbstractColumnType
      */
     public function buildCellView(CellView $view, ColumnInterface $column, RowInterface $row, array $options)
     {
-        $currency = $options['currency'];
-        if (null === $currency && 0 < strlen($path = $options['currency_path'])) {
+        if (!empty($path = $options['currency_path'])) {
             $currency = $row->getData($path);
+        } else {
+            $currency = $options['currency'];
         }
 
         $view->vars['currency'] = $currency;
