@@ -50,7 +50,10 @@ class EkynaTableExtension extends Extension implements PrependExtensionInterface
     protected function configureEkynaAdminBundleBundle(ContainerBuilder $container)
     {
         $container->prependExtensionConfig('ekyna_admin', [
-            'stylesheets' => ['bundles/ekynatable/css/table.css'],
+            'stylesheets' => [
+                'bundles/ekynatable/css/table.css',
+                'bundles/ekynatable/css/theme.css',
+            ],
         ]);
     }
 }

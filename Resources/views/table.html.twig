@@ -19,7 +19,7 @@
         {# COLUMNS, ROWS AND CELLS #}
         <div class="table-responsive">
             {% set attr = table.vars.attr|default({}) %}
-            {% set classes = attr.class|default('table table-striped table-hover') %}
+            {% set classes = attr.class|default('table table-alt-head table-striped table-hover') %}
             {% if options.class %}{% set classes = (classes ~ ' ' ~ options.class)|trim %}{% endif %}
             {% set attr = attr|merge({'class': classes}) %}
             <table{{ block('attributes') }}>
