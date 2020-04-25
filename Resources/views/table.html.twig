@@ -2,7 +2,7 @@
 
 
 {% block table %}
-{% spaceless %}
+{% apply spaceless %}
 <div class="ekyna-table">
 
     {# ERRORS #}
@@ -35,12 +35,12 @@
     </form>
     {% endif %}
 </div>
-{% endspaceless %}
+{% endapply %}
 {% endblock table %}
 
 
 {% block table_errors %}
-{% spaceless %}
+{% apply spaceless %}
     {% if table.vars.errors is not empty -%}
         {% for error in table.vars.errors -%}
             <div class="alert alert-danger">
@@ -48,12 +48,12 @@
             </div>
         {%- endfor %}
     {%- endif %}
-{% endspaceless %}
+{% endapply %}
 {% endblock table_errors %}
 
 
 {% block table_filters %}
-{% spaceless %}
+{% apply spaceless %}
 {% if table.available_filters|length > 0 %}
 <div class="table-filters">
     <div class="row filters-available">
@@ -108,7 +108,7 @@
     {% endif %}
 </div>
 {% endif %}
-{% endspaceless %}
+{% endapply %}
 {% endblock table_filters %}
 
 
@@ -118,7 +118,7 @@
 
 
 {% block table_body %}
-{% spaceless %}
+{% apply spaceless %}
 <tbody>
 {% if table.rows|length > 0 %}
     {% for row in table.rows %}
@@ -130,12 +130,12 @@
     </td>
 {% endif %}
 </tbody>
-{% endspaceless %}
+{% endapply %}
 {% endblock table_body %}
 
 
 {% block table_footer %}
-{% spaceless %}
+{% apply spaceless %}
 <div class="row table-footer">
     {# SELECTION #}
     <div class="col-md-2 table-select">
@@ -315,12 +315,12 @@
 </div>
 {% endif %}
 
-{% endspaceless %}
+{% endapply %}
 {% endblock table_footer %}
 
 
 {% block available_filters %}
-{% spaceless %}
+{% apply spaceless %}
 {% for filter in table.available_filters %}
 <a href="{{ filter.vars.add_filter_href }}"
    class="btn btn-xs btn-primary">
@@ -328,12 +328,12 @@
     <span class="glyphicon glyphicon-plus-sign"></span>
 </a>
 {% endfor %}
-{% endspaceless %}
+{% endapply %}
 {% endblock available_filters %}
 
 
 {% block active_filters %}
-{% spaceless %}
+{% apply spaceless %}
 {% for filter in table.active_filters %}
 <a href="{{ filter.vars.remove_filter_href }}"
    class="btn btn-xs btn-success">
@@ -343,11 +343,11 @@
     <span class="glyphicon glyphicon-minus-sign"></span>
 </a>
 {% endfor %}
-{% endspaceless %}
+{% endapply %}
 {% endblock active_filters %}
 
 {% block active_filter_value %}
-{% spaceless %}
+{% apply spaceless %}
     {% if filter.vars.value is iterable -%}
     {% for val in filter.vars.value -%}
         {{- val|trans }}{% if not loop.last %}, {% endif -%}
@@ -355,7 +355,7 @@
 {%- else -%}
     {{- filter.vars.value|trans }}
 {%- endif %}
-{% endspaceless %}
+{% endapply %}
 {% endblock active_filter_value %}
 
 
@@ -363,7 +363,8 @@
 
 
 {%- block number_cell -%}
-    {{- value|round(precision)|localizednumber }}{% if append is not same as (null) %} {{ append }}{% endif -%}
+    {{- value|round(precision)|localizednumber -}}
+    {%- if append is not same as (null) %}&nbsp;{{ append }}{% endif -%}
 {%- endblock number_cell -%}
 
 
