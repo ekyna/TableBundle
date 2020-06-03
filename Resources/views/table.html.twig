@@ -439,7 +439,7 @@
 
 {%- block action_button_label -%}
     {%- if button.icon|length > 0 -%}
-        <span class="glyphicon glyphicon-{{ button.icon }}"></span>
+        <span class="{{ button.fa_icon ? 'fa fa-' : 'glyphicon glyphicon-' }}{{ button.icon }}"></span>
     {%- else -%}
         {{ button.label|trans }}
     {%- endif -%}

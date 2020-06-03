@@ -57,6 +57,7 @@ class ActionsType extends AbstractColumnType
                         'label'      => null,
                         'class'      => 'default',
                         'icon'       => null,
+                        'fa_icon'    => null,
                         'confirm'    => null,
                         'target'     => null,
                         'path'       => null,
@@ -78,7 +79,6 @@ class ActionsType extends AbstractColumnType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        /** @noinspection PhpUnusedParameterInspection */
         $resolver
             ->setDefaults([
                 'label'           => null,
@@ -171,6 +171,7 @@ class ActionsType extends AbstractColumnType
                 'route_parameters_map'  => [],
                 'class'                 => 'default',
                 'icon'                  => null,
+                'fa_icon'               => false,
                 'confirm'               => null,
                 'target'                => null,
                 'disabled'              => false,
@@ -185,6 +186,7 @@ class ActionsType extends AbstractColumnType
             ->setAllowedTypes('route_parameters_map', 'array')
             ->setAllowedTypes('class', ['null', 'string'])
             ->setAllowedTypes('icon', ['null', 'string'])
+            ->setAllowedTypes('fa_icon', 'bool')
             ->setAllowedTypes('confirm', ['null', 'string'])
             ->setAllowedTypes('target', ['null', 'string'])
             ->setAllowedTypes('disabled', 'bool')
@@ -234,6 +236,7 @@ class ActionsType extends AbstractColumnType
                 'label'      => $buttonOptions['label'],
                 'class'      => $buttonOptions['class'],
                 'icon'       => $buttonOptions['icon'],
+                'fa_icon'    => $buttonOptions['fa_icon'],
                 'confirm'    => $buttonOptions['confirm'],
                 'target'     => $buttonOptions['target'],
                 'path'       => $buttonOptions['path'],
