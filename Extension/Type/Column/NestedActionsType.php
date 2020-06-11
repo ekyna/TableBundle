@@ -42,15 +42,16 @@ class NestedActionsType extends AbstractColumnType
             'class'    => 'primary',
             'confirm'  => null,
             'target'   => null,
+            'fa_icon'  => false,
         ];
 
-        $newChildButton['icon'] = 'plus';
+        $newChildButton['icon']  = 'plus';
         $newChildButton['class'] = 'success';
 
-        $moveUpButton['icon'] = 'arrow-up';
+        $moveUpButton['icon']  = 'arrow-up';
         $moveUpButton['label'] = 'Déplacer vers le haut'; // TODO translation
 
-        $moveDownButton['icon'] = 'arrow-down';
+        $moveDownButton['icon']  = 'arrow-down';
         $moveDownButton['label'] = 'Déplacer vers le bas'; // TODO translation
 
         if (!$disabled) {
@@ -59,38 +60,38 @@ class NestedActionsType extends AbstractColumnType
                 $parameters[$parameter] = $row->getData($propertyPath);
             }
 
-            $newChildButton['route'] = $options['new_child_route'];
+            $newChildButton['route']      = $options['new_child_route'];
             $newChildButton['parameters'] = $parameters;
 
-            $left = $row->getData($options['left_property_path']);
-            $right = $row->getData($options['right_property_path']);
+            $left   = $row->getData($options['left_property_path']);
+            $right  = $row->getData($options['right_property_path']);
             $parent = $row->getData($options['parent_property_path']);
 
             if ($options['roots'] && null === $parent) {
                 // Roots can't be moved
-                $moveUpButton['disabled'] = true;
+                $moveUpButton['disabled']   = true;
                 $moveDownButton['disabled'] = true;
             } else {
                 if (null !== $parent) {
-                    $accessor = $row->getPropertyAccessor();
-                    $parentLeft = $accessor->getValue($parent, $options['left_property_path']);
+                    $accessor    = $row->getPropertyAccessor();
+                    $parentLeft  = $accessor->getValue($parent, $options['left_property_path']);
                     $parentRight = $accessor->getValue($parent, $options['right_property_path']);
                 } else {
-                    $parentLeft = 0;
+                    $parentLeft  = 0;
                     $parentRight = $this->getRightBound($column->getTable(), $options) + 1;
                 }
 
                 if ($left === $parentLeft + 1) {
                     $moveUpButton['disabled'] = true;
                 } else {
-                    $moveUpButton['route'] = $options['move_up_route'];
+                    $moveUpButton['route']      = $options['move_up_route'];
                     $moveUpButton['parameters'] = $parameters;
                 }
 
                 if ($right === $parentRight - 1) {
                     $moveDownButton['disabled'] = true;
                 } else {
-                    $moveDownButton['route'] = $options['move_down_route'];
+                    $moveDownButton['route']      = $options['move_down_route'];
                     $moveDownButton['parameters'] = $parameters;
                 }
             }
@@ -117,8 +118,8 @@ class NestedActionsType extends AbstractColumnType
 
         $rightBound = 0;
 
-        $source = $table->getConfig()->getSource();
-        $adapter = $table->getSourceAdapter();
+        $source   = $table->getConfig()->getSource();
+        $adapter  = $table->getSourceAdapter();
         $property = $options['right_property_path'];
 
         if ($adapter instanceof Core\ArrayAdapter) {
@@ -131,7 +132,7 @@ class NestedActionsType extends AbstractColumnType
             }
         } elseif ($adapter instanceof ORM\EntityAdapter) {
             /** @var ORM\EntitySource $source */
-            $qb = $adapter->getManager()->createQueryBuilder();
+            $qb         = $adapter->getManager()->createQueryBuilder();
             $rightBound = $qb
                 ->from($source->getClass(), 'o')
                 ->select('MAX(o.' . $property . ')')

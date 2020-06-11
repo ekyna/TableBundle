@@ -20,7 +20,7 @@ class CountryType extends AbstractFilterType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'choices' => Intl::getRegionBundle()->getCountryNames(),
+            'choices' => array_flip(Intl::getRegionBundle()->getCountryNames()),
         ]);
     }
 
