@@ -20,6 +20,7 @@ class TableExtension extends AbstractTableExtension
             new Type\Column\ActionsType,
             new Type\Column\AnchorType,
             new Type\Column\CountryType,
+            new Type\Column\LocaleType,
             new Type\Column\NestedActionsType,
             new Type\Column\NestedAnchorType,
             new Type\Column\PriceType,

@@ -8,11 +8,11 @@ use Symfony\Component\Intl\Intl;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class CountryType
+ * Class LocaleType
  * @package Ekyna\Bundle\TableBundle\Extension\Type\Column
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class CountryType extends AbstractColumnType
+class LocaleType extends AbstractColumnType
 {
     /**
      * @inheritdoc
@@ -20,7 +20,7 @@ class CountryType extends AbstractColumnType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'choices' => array_flip(Intl::getRegionBundle()->getCountryNames()),
+            'choices' => array_flip(Intl::getLocaleBundle()->getNames()),
         ]);
     }
 

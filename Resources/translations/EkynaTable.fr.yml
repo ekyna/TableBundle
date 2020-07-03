@@ -9,6 +9,7 @@ select_format: Exporter vers le format
 export: Exporter
 per_page: Par page
 apply: Appliquer
+undefined: Indéfini
 profile:
     select: Sélectionner un profil
     name: Nouveau profil

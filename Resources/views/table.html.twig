@@ -113,7 +113,7 @@
 
 
 {%- block table_head_column_label -%}
-    {{ head.vars.label|trans }}
+    {{ head.vars.label|trans({}, head.vars.translation_domain) }}
 {%- endblock table_head_column_label -%}
 
 
@@ -324,7 +324,7 @@
 {% for filter in table.available_filters %}
 <a href="{{ filter.vars.add_filter_href }}"
    class="btn btn-xs btn-primary">
-    {{ filter.vars.label|trans }}
+    {{ filter.vars.label|trans({}, filter.vars.translation_domain) }}
     <span class="glyphicon glyphicon-plus-sign"></span>
 </a>
 {% endfor %}
@@ -337,7 +337,7 @@
 {% for filter in table.active_filters %}
 <a href="{{ filter.vars.remove_filter_href }}"
    class="btn btn-xs btn-success">
-    <strong>{{ filter.vars.label|trans }}</strong>&nbsp;
+    <strong>{{ filter.vars.label|trans({}, filter.vars.translation_domain) }}</strong>&nbsp;
     <em>{{ filter.vars.operator }}&nbsp;</em>
     &laquo;&nbsp;{{ block('active_filter_value') }}&nbsp;&raquo;
     <span class="glyphicon glyphicon-minus-sign"></span>
@@ -350,10 +350,10 @@
 {% apply spaceless %}
     {% if filter.vars.value is iterable -%}
     {% for val in filter.vars.value -%}
-        {{- val|trans }}{% if not loop.last %}, {% endif -%}
+        {{- val|trans({}, filter.vars.translation_domain) }}{% if not loop.last %}, {% endif -%}
     {%- endfor %}
 {%- else -%}
-    {{- filter.vars.value|trans }}
+    {{- filter.vars.value|trans({}, filter.vars.translation_domain) }}
 {%- endif %}
 {% endapply %}
 {% endblock active_filter_value %}
@@ -374,7 +374,15 @@
 
 
 {%- block choice_cell_value -%}
-    {{- choice.label|trans|raw -}}
+    {%- if choice.label is defined -%}
+        {%- if translation_domain is not same as(false) -%}
+            {{ choice.label|trans({}, translation_domain)|raw }}
+        {%- else -%}
+            {{ choice.label|raw }}
+        {%- endif -%}
+    {%- else -%}
+        {{ choice.value }}
+    {%- endif -%}
 {%- endblock choice_cell_value -%}
 
 
@@ -396,11 +404,11 @@
 {%- endblock entity_cell_value -%}
 
 
-{%- block boolean_cell_value %}{{ label|trans }}{% endblock boolean_cell_value -%}
+{%- block boolean_cell_value %}{{ label|trans({}, translation_domain) }}{% endblock boolean_cell_value -%}
 
 {%- block date_time_cell -%}
     {%- if value is same as(null) -%}
-        <em>{{ 'ekyna_core.value.undefined'|trans }}</em>
+        <em>{{ 'undefined'|trans({}, 'EkynaTable') }}</em>
     {%- else -%}
         {{- value|localizeddate(date_format, time_format) -}}
     {%- endif -%}
@@ -427,8 +435,8 @@
         {%- else -%}
             <a href="{{ button.route ? path(button.route, button.parameters) : button.path }}"
                class="btn btn-xs btn-{{ button.class }}"
-               title="{{ button.label|trans }}"
-               {%- if button.confirm is not empty %} onclick="return confirm('{{ button.confirm|trans|e('js') }}')"{% endif -%}
+               title="{{ button.label|trans({}, translation_domain) }}"
+               {%- if button.confirm is not empty %} onclick="return confirm('{{ button.confirm|trans({}, translation_domain)|e('js') }}')"{% endif -%}
                {%- if button.target is not empty %} target="{{ button.target }}"{% endif %}>
                 {{- block('action_button_label') -}}
             </a>
@@ -441,7 +449,7 @@
     {%- if button.icon|length > 0 -%}
         <span class="{{ button.fa_icon ? 'fa fa-' : 'glyphicon glyphicon-' }}{{ button.icon }}"></span>
     {%- else -%}
-        {{ button.label|trans }}
+        {{ button.label|trans({}, translation_domain) }}
     {%- endif -%}
 {%- endblock action_button_label -%}
 
