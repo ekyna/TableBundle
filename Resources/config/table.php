@@ -7,6 +7,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Ekyna\Bundle\TableBundle\Extension\Type\Extension\BooleanColumnTypeExtension;
 use Ekyna\Bundle\TableBundle\Extension\Type\Extension\BooleanFilterTypeExtension;
 use Ekyna\Bundle\TableBundle\Extension\Type\Extension\BootstrapTypeExtension;
+use Ekyna\Bundle\TableBundle\Extension\Type\Extension\ChoiceFilterTypeExtension;
 use Ekyna\Bundle\TableBundle\Extension\Type\Extension\TranslateActionTypeExtension;
 use Ekyna\Bundle\TableBundle\Extension\Type\Extension\TranslateColumnTypeExtension;
 use Ekyna\Bundle\TableBundle\Extension\Type\Extension\TranslateFilterTypeExtension;
@@ -36,6 +37,10 @@ return static function (ContainerConfigurator $container) {
             ->args([
                 service('translator'),
             ])
+            ->tag('table.filter_type_extension')
+
+        // Choice filter type extension
+        ->set('table.filter_type_extension.bootstrap', ChoiceFilterTypeExtension::class)
             ->tag('table.filter_type_extension')
 
         // Bootstrap CSS classes table extension
