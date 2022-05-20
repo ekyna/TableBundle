@@ -392,7 +392,7 @@
         {%- if trans_domain is same as(false) -%}
             {{ choice.label|raw }}
         {%- else -%}
-            {{ choice.label|trans({}, trans_domain)|raw }}
+            {{ choice.label|trans({}, trans_domain)|raw }}{# TODO per choice trans domain #}
         {%- endif -%}
     {%- else -%}
         {{ choice.value }}
@@ -410,11 +410,13 @@
 {% endblock entity_cell -%}
 
 {%- block entity_cell_value -%}
-    {% if route is defined and choice.parameters is defined %}
-        <a href="{{ path(route, choice.parameters) }}">{{ choice.label|raw }}</a>
-    {% else %}
-        {{- choice.label|raw -}}
-    {% endif %}
+    {% if choice.tag is defined and choice.tag is not empty -%}
+    <{{ choice.tag }}{% with {attr: choice.attr|default({'href': 'javascript:void(0)'}) } only %}{{ block('attributes') }}{% endwith %}>
+        {{- block('choice_cell_value') -}}
+    </{{ choice.tag }}>
+    {%- else -%}
+        {{ block('choice_cell_value') }}
+    {%- endif %}
 {%- endblock entity_cell_value -%}
 
 

@@ -11,6 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+use function Symfony\Component\Translation\t;
+
 /**
  * Class BooleanColumnTypeExtension
  * @package Ekyna\Bundle\TableBundle\Extension\Type\Extension
@@ -27,7 +29,7 @@ class BooleanColumnTypeExtension extends AbstractColumnTypeExtension
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $normalizer = function(Options $options, $value) {
+        $normalizer = function (Options $options, $value) {
             if ($value instanceof TranslatableInterface) {
                 return $value->trans($this->translator);
             }
@@ -36,6 +38,10 @@ class BooleanColumnTypeExtension extends AbstractColumnTypeExtension
         };
 
         $resolver
+            ->setDefaults([
+                'true_label'  => t('value.yes', [], 'EkynaTable'),
+                'false_label' => t('value.no', [], 'EkynaTable'),
+            ])
             ->addAllowedTypes('true_label', TranslatableInterface::class)
             ->addAllowedTypes('false_label', TranslatableInterface::class)
             ->addNormalizer('true_label', $normalizer)

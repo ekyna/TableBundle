@@ -31,18 +31,19 @@ use function Symfony\Component\Translation\t;
 class ActionsType extends AbstractColumnType
 {
     public const BUTTON_DEFAULTS = [
-        'path'         => null,
-        'route'        => null,
-        'parameters'   => [],
-        'theme'        => 'default',
-        'icon'         => null,
-        'fa_icon'      => false,
-        'confirm'      => null,
-        'target'       => null,
-        'disabled'     => false,
-        'disable'      => null,
-        'filter'       => null,
-        'trans_domain' => null,
+        'path'           => null,
+        'route'          => null,
+        'parameters'     => [],
+        'parameters_map' => [],
+        'theme'          => 'default',
+        'icon'           => null,
+        'fa_icon'        => false,
+        'confirm'        => null,
+        'target'         => null,
+        'disabled'       => false,
+        'disable'        => null,
+        'filter'         => null,
+        'trans_domain'   => null,
     ];
 
     private ?OptionsResolver $buttonOptionsResolver = null;
@@ -203,7 +204,7 @@ class ActionsType extends AbstractColumnType
             ->setRequired([
                 'label',
             ])
-            ->setDefaults([
+            ->setDefaults([ // TODO Use BUTTON_DEFAULTS constant ?
                 'path'                  => null,
                 'route'                 => null,
                 'parameters'            => [],

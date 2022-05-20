@@ -52,7 +52,6 @@ class AnchorType extends AbstractColumnType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
-            ->setDefined('route_name')
             ->setDefaults([
                 'route'          => null,
                 'parameters'     => [],
