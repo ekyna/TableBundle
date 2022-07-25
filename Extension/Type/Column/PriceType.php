@@ -28,9 +28,11 @@ class PriceType extends AbstractColumnType
                 'currency'      => null,
                 'currency_path' => null,
                 'alignment'     => 'right',
+                'scale'         => null,
             ])
             ->setAllowedTypes('currency', ['null', 'string'])
-            ->setAllowedTypes('currency_path', ['null', 'string']);
+            ->setAllowedTypes('currency_path', ['null', 'string'])
+            ->setAllowedTypes('scale', ['null', 'int']);
     }
 
     /**
@@ -45,6 +47,12 @@ class PriceType extends AbstractColumnType
         }
 
         $view->vars['currency'] = $currency;
+
+        $formatOptions = [];
+        if (isset($options['scale'])) {
+            $formatOptions['fraction_digit'] = $options['scale'];
+        }
+        $view->vars['format_options'] = $formatOptions;
     }
 
     /**
