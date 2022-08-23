@@ -50,7 +50,6 @@ class NestedActionsType extends AbstractColumnType
 
         $newChildButton = $moveUpButton = $moveDownButton = [
             'disabled'     => $disabled,
-            'label'        => 'nested.add',
             'theme'        => 'primary',
             'confirm'      => null,
             'target'       => null,
@@ -59,6 +58,7 @@ class NestedActionsType extends AbstractColumnType
         ];
 
         $newChildButton['icon'] = 'plus';
+        $newChildButton['label'] = 'nested.add';
         $newChildButton['theme'] = 'success';
 
         $moveUpButton['icon'] = 'arrow-up';

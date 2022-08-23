@@ -13,11 +13,13 @@ use Ekyna\Component\Table\Extension\Core\Type\Column\ColumnType;
 use Ekyna\Component\Table\Source\RowInterface;
 use Ekyna\Component\Table\View\CellView;
 use ReflectionFunction;
+use ReflectionNamedType;
 use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException as InvalidOptions;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use function array_replace;
+use function assert;
 use function count;
 use function is_array;
 use function is_callable;
@@ -31,19 +33,20 @@ use function Symfony\Component\Translation\t;
 class ActionsType extends AbstractColumnType
 {
     public const BUTTON_DEFAULTS = [
-        'path'           => null,
-        'route'          => null,
-        'parameters'     => [],
-        'parameters_map' => [],
-        'theme'          => 'default',
-        'icon'           => null,
-        'fa_icon'        => false,
-        'confirm'        => null,
-        'target'         => null,
-        'disabled'       => false,
-        'disable'        => null,
-        'filter'         => null,
-        'trans_domain'   => null,
+        'path'                  => null,
+        'route'                 => null,
+        'parameters'            => [],
+        'parameters_map'        => [],
+        'theme'                 => 'default',
+        'icon'                  => null,
+        'fa_icon'               => false,
+        'confirm'               => null,
+        'target'                => null,
+        'disabled'              => false,
+        'disable_property_path' => null,
+        'disable'               => null,
+        'filter'                => null,
+        'trans_domain'          => null,
     ];
 
     private ?OptionsResolver $buttonOptionsResolver = null;
@@ -93,7 +96,8 @@ class ActionsType extends AbstractColumnType
             ->setAllowedTypes('button_builder', Closure::class)
             ->setNormalizer('buttons', function (Options $options, $value) {
                 $loader = $options['buttons_loader'];
-                if (is_callable($loader) && $this->checkButtonsLoader($loader)) {
+                if (is_callable($loader)) {
+                    assert($this->checkButtonsLoader($loader));
                     $value = $loader($options, $value);
                 }
 
@@ -105,7 +109,8 @@ class ActionsType extends AbstractColumnType
 
                 $buttons = [];
                 foreach ($value as $button) {
-                    if (is_callable($button) && $this->checkButtonBuilder($button)) {
+                    if (is_callable($button)) {
+                        assert($this->checkButtonBuilder($button));
                         $buttons[] = $button;
                     } elseif (is_array($button)) {
                         $buttons[] = $resolver->resolve($button);
@@ -129,35 +134,29 @@ class ActionsType extends AbstractColumnType
      * @param callable $callable
      *
      * @return bool
-     *
-     * @noinspection PhpDocMissingThrowsInspection
      */
     private function checkButtonsLoader(callable $callable): bool
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
         $reflection = new ReflectionFunction($callable);
-        $parameters = $reflection->getParameters();
 
+        $type = $reflection->getReturnType();
+        if (!$type instanceof ReflectionNamedType || $type->getName() !== 'array') {
+            return false;
+        }
+
+        $parameters = $reflection->getParameters();
         if (2 !== count($parameters)) {
             return false;
         }
 
-        if (null === $class = $parameters[0]->getClass()) {
+        $type = $parameters[0]->getType();
+        if (!$type instanceof ReflectionNamedType || $type->getName() !== Options::class) {
             return false;
         }
 
-        if ($class->name !== Options::class) {
-            return false;
-        }
+        $type = $parameters[1]->getType();
 
-        /* TODO if (null === $type = $parameters[1]->getType()) {
-            return false;
-        }
-        if ($type->getName() !== 'array') {
-            return false;
-        }*/
-
-        return true;
+        return $type instanceof ReflectionNamedType && $type->getName() === 'array';
     }
 
     /**
@@ -166,28 +165,43 @@ class ActionsType extends AbstractColumnType
      * @param callable $callable
      *
      * @return bool
-     *
-     * @noinspection PhpDocMissingThrowsInspection
      */
     private function checkButtonBuilder(callable $callable): bool
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
         $reflection = new ReflectionFunction($callable);
-        $parameters = $reflection->getParameters();
 
+        $type = $reflection->getReturnType();
+        if (!$type instanceof ReflectionNamedType || $type->getName() !== 'array') { // TODO may return NULL too
+            return false;
+        }
+
+        $parameters = $reflection->getParameters();
         if (1 !== count($parameters)) {
             return false;
         }
 
-        if (null === $class = $parameters[0]->getClass()) {
+        $type = $parameters[0]->getType();
+
+        return $type instanceof ReflectionNamedType && $type->getName() === RowInterface::class;
+    }
+
+    private function checkToggleFunction(callable $callable): bool
+    {
+        $reflection = new ReflectionFunction($callable);
+
+        $type = $reflection->getReturnType();
+        if (!$type instanceof ReflectionNamedType || $type->getName() !== 'bool') {
             return false;
         }
 
-        if ($class->name !== RowInterface::class) {
+        $parameters = $reflection->getParameters();
+        if (1 !== count($parameters)) {
             return false;
         }
 
-        return true;
+        $type = $parameters[0]->getType();
+
+        return $type instanceof ReflectionNamedType && $type->getName() === RowInterface::class;
     }
 
     /**
@@ -204,22 +218,7 @@ class ActionsType extends AbstractColumnType
             ->setRequired([
                 'label',
             ])
-            ->setDefaults([ // TODO Use BUTTON_DEFAULTS constant ?
-                'path'                  => null,
-                'route'                 => null,
-                'parameters'            => [],
-                'parameters_map'        => [],
-                'theme'                 => 'default',
-                'icon'                  => null,
-                'fa_icon'               => false,
-                'confirm'               => null,
-                'target'                => null,
-                'disabled'              => false,
-                'disable_property_path' => null,
-                'disable'               => null,
-                'filter'                => null,
-                'trans_domain'          => null,
-            ])
+            ->setDefaults(self::BUTTON_DEFAULTS)
             ->setAllowedTypes('label', 'string')
             ->setAllowedTypes('path', ['null', 'string'])
             ->setAllowedTypes('route', ['null', 'string'])
@@ -235,6 +234,20 @@ class ActionsType extends AbstractColumnType
             ->setAllowedTypes('disable', ['null', 'callable'])
             ->setAllowedTypes('filter', ['null', 'callable'])
             ->setAllowedTypes('trans_domain', ['null', 'string'])
+            ->setAllowedValues('disable', function ($value) {
+                if (is_callable($value)) {
+                    assert($this->checkToggleFunction($value));
+                }
+
+                return true;
+            })
+            ->setAllowedValues('filter', function ($value) {
+                if (is_callable($value)) {
+                    assert($this->checkToggleFunction($value));
+                }
+
+                return true;
+            })
             ->setNormalizer('route', function (Options $options, $value) {
                 if (empty($value) && empty($options['path'])) {
                     throw new InvalidOptions("The button option 'path' must be defined if 'route' is not.");
@@ -255,29 +268,28 @@ class ActionsType extends AbstractColumnType
             return $this->buttonBuilder;
         }
 
-        return $this->buttonBuilder = Closure::fromCallable(
-            function (RowInterface $row, array $buttonOptions) {
-                // Filter
-                if (($filter = $buttonOptions['filter']) && is_callable($filter) && !$filter($row)) {
-                    return null;
-                }
-
-                // Parameters
-                foreach ($buttonOptions['parameters_map'] as $parameter => $propertyPath) {
-                    $buttonOptions['parameters'][$parameter] = $row->getData($propertyPath);
-                }
-                unset($buttonOptions['parameters_map']);
-
-                // Disabled
-                if (!empty($disabledPath = $buttonOptions['disable_property_path'])) {
-                    $buttonOptions['disabled'] = $row->getData($disabledPath);
-                } elseif ((null !== $disable = $buttonOptions['disable']) && is_callable($disable)) {
-                    $buttonOptions['disabled'] = $disable($row);
-                }
-                unset($buttonOptions['disable_property_path']);
-
-                return $buttonOptions;
+        return $this->buttonBuilder = (function (RowInterface $row, array $buttonOptions): ?array {
+            // Filter
+            if (is_callable($filter = $buttonOptions['filter']) && !$filter($row)) {
+                return null;
             }
-        );
+
+            // Parameters
+            foreach ($buttonOptions['parameters_map'] as $parameter => $propertyPath) {
+                $buttonOptions['parameters'][$parameter] = $row->getData($propertyPath);
+            }
+            unset($buttonOptions['parameters_map']);
+
+            // Disabled
+            if (!empty($disabledPath = $buttonOptions['disable_property_path'])) {
+                $buttonOptions['disabled'] = (bool)$row->getData($disabledPath);
+            } elseif (is_callable($disable = $buttonOptions['disable'])) {
+                $buttonOptions['disabled'] = $disable($row);
+            }
+            unset($buttonOptions['disable']);
+            unset($buttonOptions['disable_property_path']);
+
+            return $buttonOptions;
+        })(...);
     }
 }
