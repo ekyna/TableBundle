@@ -18,6 +18,8 @@ use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException as Inva
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Symfony\Contracts\Translation\TranslatableInterface;
+
 use function array_replace;
 use function assert;
 use function count;
@@ -97,7 +99,7 @@ class ActionsType extends AbstractColumnType
             ->setNormalizer('buttons', function (Options $options, $value) {
                 $loader = $options['buttons_loader'];
                 if (is_callable($loader)) {
-                    assert($this->checkButtonsLoader($loader));
+                    assert($this->checkButtonsLoader($loader), 'Invalid button loader');
                     $value = $loader($options, $value);
                 }
 
@@ -110,7 +112,7 @@ class ActionsType extends AbstractColumnType
                 $buttons = [];
                 foreach ($value as $button) {
                     if (is_callable($button)) {
-                        assert($this->checkButtonBuilder($button));
+                        assert($this->checkButtonBuilder($button), 'Invalid button builder');
                         $buttons[] = $button;
                     } elseif (is_array($button)) {
                         $buttons[] = $resolver->resolve($button);
@@ -219,7 +221,7 @@ class ActionsType extends AbstractColumnType
                 'label',
             ])
             ->setDefaults(self::BUTTON_DEFAULTS)
-            ->setAllowedTypes('label', 'string')
+            ->setAllowedTypes('label', ['string', TranslatableInterface::class])
             ->setAllowedTypes('path', ['null', 'string'])
             ->setAllowedTypes('route', ['null', 'string'])
             ->setAllowedTypes('parameters', 'array')
