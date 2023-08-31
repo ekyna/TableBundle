@@ -434,14 +434,20 @@
 
 
 {%- block anchor_cell -%}
-    {%- if value is same as(null) -%}
+    {%- if anchor is not defined -%}
         &nbsp;
-    {%- elseif path is defined and path is not null -%}
-        <a href="{{ path }}">{{ value|raw }}</a>
-    {%- elseif route is defined and route is not null -%}
-        <a href="{{ path(route, parameters) }}">{{ value|raw }}</a>
+    {%- elseif anchor is iterable -%}
+        {% for object in anchor -%}
+            {% block anchor %}
+            <a{% with {'attr': object.attr} %}{{ block('attributes') }}{% endwith %}>
+                {{ object.label|raw }}
+            </a>
+            {% endblock %}
+        {% else %}
+            &nbsp;
+        {% endfor -%}
     {%- else -%}
-        {{ value|raw }}
+        {% with {'object': anchor} %}{{ block('anchor') }}{% endwith %}
     {%- endif -%}
 {%- endblock anchor_cell -%}
 
@@ -492,9 +498,5 @@
             <i class="{{ node.class }}"></i>
         {%- endif -%}
     {%- endfor -%}
-    {% if path is defined -%}
-    <a href="{{ path }}">{{ value }}</a>
-    {%- else -%}
-    <a href="{{ path(route, parameters) }}">{{ value }}</a>
-    {%- endif %}
+    {{- block('anchor_cell') -}}
 {%- endblock nested_anchor_cell -%}

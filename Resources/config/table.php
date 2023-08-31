@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Ekyna\Bundle\TableBundle\Extension\Type\Column\AnchorType;
 use Ekyna\Bundle\TableBundle\Extension\Type\Extension\BooleanColumnTypeExtension;
 use Ekyna\Bundle\TableBundle\Extension\Type\Extension\BooleanFilterTypeExtension;
 use Ekyna\Bundle\TableBundle\Extension\Type\Extension\BootstrapTypeExtension;
@@ -24,6 +25,13 @@ use Ekyna\Component\Table\TableRegistry;
 return static function (ContainerConfigurator $container) {
     $container
         ->services()
+
+        // Anchor column type
+        ->set('table.column_type.anchor', AnchorType::class)
+            ->args([
+                service('router'),
+            ])
+            ->tag('table.column_type')
 
         // Boolean column type extension
         ->set('table.column_type_extension.boolean', BooleanColumnTypeExtension::class)

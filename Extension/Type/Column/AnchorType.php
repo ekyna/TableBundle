@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\TableBundle\Extension\Type\Column;
 
+use Ekyna\Bundle\TableBundle\Model\Anchor;
 use Ekyna\Component\Table\Column\AbstractColumnType;
 use Ekyna\Component\Table\Column\ColumnInterface;
 use Ekyna\Component\Table\Extension\Core\Type\Column\TextType;
 use Ekyna\Component\Table\Source\RowInterface;
 use Ekyna\Component\Table\View\CellView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use function array_diff_key;
+use function count;
 
 /**
  * Class AnchorType
@@ -20,17 +23,33 @@ use function array_diff_key;
  */
 class AnchorType extends AbstractColumnType
 {
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+    ) {
+    }
+
     /**
      * @inheritDoc
      */
     public function buildCellView(CellView $view, ColumnInterface $column, RowInterface $row, array $options): void
     {
-        if (isset($view->vars['path']) || (isset($view->vars['route']) && isset($view->vars['parameters']))) {
+        if (isset($view->vars['anchor'])) {
+            return;
+        }
+
+        if (null === $value = $view->vars['value']) {
+            return;
+        }
+
+        $view->vars['anchor'] = new Anchor($value, (string)$value);
+
+        if (!isset($view->vars['route'])) {
             return;
         }
 
         $parameters = $options['parameters'];
         if (!empty($options['parameters_map'])) {
+            //$prefix =
             foreach ($options['parameters_map'] as $parameter => $propertyPath) {
                 if (null !== $value = $row->getData($propertyPath)) {
                     $parameters[$parameter] = $value;
@@ -42,8 +61,7 @@ class AnchorType extends AbstractColumnType
             }
         }
 
-        $view->vars['route']      = $options['route'];
-        $view->vars['parameters'] = $parameters;
+        $view->vars['anchor']->attr['href'] = $this->urlGenerator->generate($options['route'], $parameters);
     }
 
     /**
