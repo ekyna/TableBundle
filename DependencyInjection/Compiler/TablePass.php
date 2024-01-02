@@ -33,15 +33,15 @@ use function array_key_exists;
  */
 class TablePass implements CompilerPassInterface
 {
-    private const TABLE_TYPE            = 'table.type';
-    private const TABLE_TYPE_EXTENSION  = 'table.type_extension';
-    private const COLUMN_TYPE           = 'table.column_type';
-    private const COLUMN_TYPE_EXTENSION = 'table.column_type_extension';
-    private const FILTER_TYPE           = 'table.filter_type';
-    private const FILTER_TYPE_EXTENSION = 'table.filter_type_extension';
-    private const ACTION_TYPE           = 'table.action_type';
-    private const ACTION_TYPE_EXTENSION = 'table.action_type_extension';
-    private const ADAPTER_FACTORY       = 'table.adapter_factory';
+    public const TABLE_TYPE            = 'table.type';
+    public const TABLE_TYPE_EXTENSION  = 'table.type_extension';
+    public const COLUMN_TYPE           = 'table.column_type';
+    public const COLUMN_TYPE_EXTENSION = 'table.column_type_extension';
+    public const FILTER_TYPE           = 'table.filter_type';
+    public const FILTER_TYPE_EXTENSION = 'table.filter_type_extension';
+    public const ACTION_TYPE           = 'table.action_type';
+    public const ACTION_TYPE_EXTENSION = 'table.action_type_extension';
+    public const ADAPTER_FACTORY       = 'table.adapter_factory';
 
     use PriorityTaggedServiceTrait;
 
