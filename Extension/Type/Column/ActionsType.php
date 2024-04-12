@@ -58,6 +58,7 @@ class ActionsType extends AbstractColumnType
     {
         $builder
             ->setSortable(false)
+            ->setExportable(false)
             ->setPropertyPath(null);
     }
 
