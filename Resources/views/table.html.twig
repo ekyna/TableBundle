@@ -377,8 +377,10 @@
 
 
 {%- block number_cell -%}
+    {%- if value is not null -%}
     {{- value|round(precision)|format_number -}}
     {%- if append is not same as (null) %}&nbsp;{{ append }}{% endif -%}
+    {%- endif -%}
 {%- endblock number_cell -%}
 
 
