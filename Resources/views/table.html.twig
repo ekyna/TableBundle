@@ -341,12 +341,15 @@
         {%- if filter.vars.trans_domain is same as(false) %}{{ filter.vars.label }}{% else %}{{ filter.vars.label|trans({}, filter.vars.trans_domain) }}{% endif -%}
     </strong>&nbsp;
     <em>{{ filter.vars.operator }}&nbsp;</em>
+    {% if filter.vars.value is not empty -%}
     &laquo;&nbsp;{{ block('active_filter_value') }}&nbsp;&raquo;
+    {%- endif %}
     <span class="glyphicon glyphicon-minus-sign"></span>
 </a>
 {% endfor %}
 {% endapply %}
 {% endblock active_filters %}
+
 
 {% block active_filter_value %}
 {% apply spaceless %}
