@@ -384,7 +384,9 @@
 
 
 {%- block price_cell -%}
+    {%- if value is not null -%}
     {{- value|format_currency(currency, format_options) -}}
+    {%- endif -%}
 {%- endblock price_cell -%}
 
 
