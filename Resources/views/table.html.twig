@@ -12,7 +12,9 @@
     {{ block('table_filters') }}
 
     {# FORM START for selection, batch, profiles, columns or export #}
+    {% if table.ui.form %}
     <form name="{{ table.vars.name }}" method="GET">{# TODO method option/parameter #}
+    {% endif %}
 
         {# COLUMNS, ROWS AND CELLS #}
         <div class="table-responsive">
@@ -29,7 +31,9 @@
         {{ block('table_footer') }}
 
     {# FORM END for selection, batch, profiles, columns or export #}
+    {% if table.ui.form %}
     </form>
+    {% endif %}
 </div>
 {% endapply %}
 {% endblock table %}
